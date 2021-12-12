@@ -6,6 +6,7 @@ use std::{
     collections::{HashMap, HashSet},
     env,
 };
+use any_terminal_size::any_terminal_size;
 
 use crate::{
     context::opposite_positions,
@@ -28,7 +29,16 @@ fn display_width() -> usize {
         }
     }
 
-    term_size::dimensions().map(|(w, _)| w).unwrap_or(80)
+    let default_width_fallback = || -> usize {
+        if let Ok(s) = env::var("DFT_WIDTH_FALLBACK") {
+            if let Ok(i) = s.parse::<usize>() {
+                return i
+            }
+        }
+        return 80
+    }();
+
+    any_terminal_size().map(|(w, _)| w.0 as usize).unwrap_or(default_width_fallback)
 }
 
 /// Split `s` by newlines, but guarantees that the output is nonempty.
@@ -261,41 +271,26 @@ pub fn display_hunks(
             );
 
             if no_lhs_changes {
-                match rhs_line_num {
-                    Some(rhs_line_num) => {
-                        let rhs_line = &rhs_colored_lines[rhs_line_num.0];
-                        if same_lines {
-                            out_lines.push(format!("{}{}", display_rhs_line_num, rhs_line));
-                        } else {
-                            out_lines.push(format!(
-                                "{}{}{}",
-                                display_lhs_line_num, display_rhs_line_num, rhs_line
-                            ));
-                        }
-                    }
-                    None => {
-                        // We didn't have any changed RHS lines in the
-                        // hunk, but we had some contextual lines that
-                        // only occurred on the LHS (e.g. extra newlines).
-                        out_lines.push(format!("{}{}", display_rhs_line_num, display_rhs_line_num));
-                    }
+                let rhs_line = &rhs_colored_lines[rhs_line_num.expect("Should have RHS line").0];
+                if same_lines {
+                    // Don't print the line numbers in two columns if
+                    // they're all the same.
+                    out_lines.push(format!("{}{}", display_rhs_line_num, rhs_line));
+                } else {
+                    out_lines.push(format!(
+                        "{}{}{}",
+                        display_lhs_line_num, display_rhs_line_num, rhs_line
+                    ));
                 }
             } else if no_rhs_changes {
-                match lhs_line_num {
-                    Some(lhs_line_num) => {
-                        let lhs_line = &lhs_colored_lines[lhs_line_num.0];
-                        if same_lines {
-                            out_lines.push(format!("{}{}", display_lhs_line_num, lhs_line));
-                        } else {
-                            out_lines.push(format!(
-                                "{}{}{}",
-                                display_lhs_line_num, display_rhs_line_num, lhs_line
-                            ));
-                        }
-                    }
-                    None => {
-                        out_lines.push(format!("{}{}", display_lhs_line_num, display_rhs_line_num));
-                    }
+                let lhs_line = &lhs_colored_lines[lhs_line_num.expect("Should have LHS line").0];
+                if same_lines {
+                    out_lines.push(format!("{}{}", display_lhs_line_num, lhs_line));
+                } else {
+                    out_lines.push(format!(
+                        "{}{}{}",
+                        display_lhs_line_num, display_rhs_line_num, lhs_line
+                    ));
                 }
             } else {
                 let lhs_line = match lhs_line_num {
