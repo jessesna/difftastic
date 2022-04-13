@@ -1,4 +1,426 @@
-## 0.15 (unreleased)
+## 0.27 (unreleased)
+
+### Command Line Interface
+
+Difftastic now validates environment variables the same way as
+arguments. `DFT_DISPLAY=no-such-mode` will now error rather than
+silently using the default display mode.
+
+## 0.26.3 (released 10th April 2022)
+
+### Release
+
+Difftastic now uses GitHub releases with precompiled binaries for
+Linux, macOS and Windows.
+
+## 0.26.2 (released 10th April 2022)
+
+### Build
+
+Fixed compilation error on Windows due to GCC extension usage in the
+tree-sitter-nix library.
+
+## 0.26.1 (released 10th April 2022)
+
+### Build
+
+This version of difftastic is also available as a GitHub release with
+precompiled binaries available.
+
+### Parsing
+
+Fixed Zig parsing of `@foo` identifiers.
+
+### Display
+
+Fixed a crash when inserting newlines in JSX literals.
+
+## 0.26 (released 9th April 2022)
+
+### Build
+
+Fixed an issue where C++ libraries were built before before the C
+libraries that they depended on.
+
+### Display
+
+The side-by-side display no longer pads the right column to fill the
+terminal. This improves display when the terminal is slightly shrunk,
+or when wide characters (e.g. emoji) are used.
+
+Improved syntax highlighting for boolean constants and character
+literals.
+
+### Parsing
+
+Added Gleam, YAML and Zig support.
+
+Improved Clojure parsing with `^Metadata`.
+
+### Command Line Interface
+
+Added the `--display` option to switch between `side-by-side`,
+`side-by-side-show-both`, and `inline` display modes. This replaces
+the `INLINE` and `DFT_SHOW_BOTH` environment variables.
+
+Added the `--language` option to enable overriding language
+detection. When specified, language detection is disabled, and the
+input file is assumed to have the extension specified.
+
+### Diffing
+
+Improved diff results for nested sequences `foo(bar(baz()))` in C-like
+languages.
+
+## 0.25 (released 31st March 2022)
+
+### Display
+
+Difftastic no longer shows "1/1" when a file only has a single hunk.
+
+Improved Clojure and Scala syntax highlighting.
+
+When a file is entirely unchanged, difftastic now shows "no changes"
+even if it successfully parsed. Previously it would only show "no
+syntactic changes".
+
+Fixed an issue where some colors were shown when `--color never` was
+specified.
+
+Fixed a crash when a text file ended with a multibyte character.
+
+Fixed side-by-side display when source files contained CRLF.
+
+### Parsing
+
+Fixed an issue in C and C++ where blank lines were highlighted after
+novel preprocessor lines.
+
+Fixed an issue with parsing `[` and `]` in Java.
+
+Fixed an issue with parsing interpolated strings in PHP.
+
+Added support for Janet, Lua and Nix.
+
+## 0.24 (released 26th March 2022)
+
+### Diffing
+
+Reduced the default value of DFT_NODE_LIMIT from 100,000 to
+30,000. This fixes cases where files near the limit would use too much
+memory and not terminate.
+
+### Display
+
+Fixed an issue where hunks would be missing lines. This occurred in
+certain circumstances when a line contained both changed and unchanged
+parts.
+
+Fixed an issue where blank lines at the beginning or end of a file
+would be excluded from context.
+
+Fixed an issue where lines containing only whitespace would be
+highlighted in purple.
+
+Fixed an issue with changed multiline strings where blank lines were
+not highlighted.
+
+Improved Clojure syntax highlighting.
+
+### Parsing
+
+Added support for Dart.
+
+### Command Line Interface
+
+Difftastic will now warn if both arguments point to the same file.
+
+When diffing directories, diff results are printed incrementally
+rather than waiting for the results of all files before printing.
+
+## 0.23.1 (released 19th March 2022)
+
+Fixed crash where the 'shrink unchanged' logic would not set the
+change state on the outer list.
+
+## 0.23 (released 17th March 2022)
+
+### Diffing
+
+Improved performance on very large files that are compared by text.
+
+Fixed some cases where changing list delimiters would lead to
+incorrect diffs.
+
+Fixed an issue where lines were not aligned correctly after correcting
+sliders.
+
+Fixed an issue the outermost delimiter in lists was sometimes
+incorrectly marked as unchanged, producing non-optimal diffs.
+
+### Display
+
+Display now prefers to align blank lines in the display, producing
+significantly better results in many cases.
+
+Fixed an issue where some lines in a hunk were not displayed.
+
+## 0.22 (released 10th March 2022)
+
+Difftastic now requires Rust 1.56 to build.
+
+### Parsing
+
+Added support for PHP.
+
+Fixed handling of `<` `>` delimiters in C++ and Rust.
+
+### Diffing
+
+Difftastic will now split files that contain obviously unchanged
+regions, substantially improving performance when a file has multiple
+changes that have many unchanged items between them.
+
+Improved diff results when choosing between syntax nodes at different
+nesting levels. This is restoring a heuristic that was removed in
+0.20.
+
+Improved diff results when lists have unequal sizes.
+
+Improved diff results when the language parser thinks that names occur
+in different syntactic positions.
+
+Adjusted the heuristics for 'so much has changed in this expression
+that it is confusing to highlight the unchanged parts'. The heuristic
+is now less aggressive, which helps performance and seems to produce
+slightly better results.
+
+## 0.21 (released 28th February 2022)
+
+### Parsing
+
+Difftastic now understands `-*-` file headers (as used by Emacs) when
+performing language detection.
+
+### Display
+
+Improved alignment logic. This fixes a bug where the last line of a
+file wasn't displayed, and generally improves how difftastic chooses
+to align content.
+
+Fixed a crash when line wrapping produced an entirely blank line.
+
+### Diffing
+
+Improved word diffing (in both comments and textual diffs) when source
+contains Unicode characters. Word splitting now uses the Unicode
+alphabetic property.
+
+Fixed a crash when comments contained multibyte Unicode characters.
+
+## 0.20 (released 20th February 2022)
+
+### Diffing
+
+Diffing now correctly handles nodes being moved to parent
+lists. Previously this would be ignored, leading to difftastic
+incorrectly claiming things were unchanged. This also leads to better
+diffing results in general, although is somewhat slower (2x in
+testing).
+
+Improved slider logic in larger expressions.
+
+Increased the default value DFT_NODE_LIMIT to 100,000 (from
+50,000). This increases the likelihood that files get a syntactic diff
+whilst still having acceptable performance.
+
+### Display
+
+Fixed an issue where whole file additions/removals were printed twice.
+
+Fixed an issue where difftastic didn't show context on hunks where the
+unchanged content was on different lines.
+
+Hunks are now merged if the lines are immediately adjacent
+(e.g. hunk 1 ends on line 11, hunk 2 starts on line 12), not just if
+they're overlapping.
+
+### Command Line Interface
+
+Difftastic will now use a text dif for large files that are too big to
+parse in a reasonable amount of time. This threshold is
+configurable with `--byte-limit` and `DFT_BYTE_LIMIT`.
+
+Fixed a crash when called with zero arguments.
+
+## 0.19 (released 7th February 2022)
+
+### Parsing
+
+Fixed an issue with changes being ignored in OCaml's `{||}` string
+literals.
+
+### Display
+
+Fixed an issue where larger additions were not lined up with removals.
+
+Improved syntax highlighting for Clojure, Common Lisp and TypeScript.
+
+Comments are now highlighted with italics, making it easier to see
+syntax even when text is red.
+
+Built-in constants are now highlighted consistently with other
+constants.
+
+Improved minor display issues when one file is longer than the other.
+
+### Diffing
+
+If given binary files, difftastic will now report if the file contents
+are identical.
+
+Difftastic will now use a text diff for large files, rather than
+trying to use more memory than is available. This threshold is
+configurable with `--node-limit` and `DFT_NODE_LIMIT`.
+
+Fixed a bug in the text diff logic where lines weren't shown if they
+did not have both word additions and word removals.
+
+### Command Line Interface
+
+Difftastic will now error if either argument does not exist, unless
+`--missing-as-empty` (new argument) is passed. This is a better
+default, but requires Mercurial uses to [specify this
+flag](https://difftastic.wilfred.me.uk/mercurial.html) in their
+configuration.
+
+## 0.18.1 (released 30 January 2022)
+
+Fixed a compilation issue on Rust 1.54 (0.18 only built on newer
+versions of Rust).
+
+## 0.18 (released 30 January 2022)
+
+### Parsing
+
+Fixed an issue with missing positions in OCaml attribute syntax.
+
+Fixed parsing issues in Common Lisp: character literals, `loop` macro
+usage with `maximizing`.
+
+### Diffing
+
+Improved performance when diffing a single large expression.
+
+### Display
+
+Fixed display issues where lines were printed more than once.
+
+Subword changes in comments are now shown in bold, to make them more
+visible.
+
+Improved colours on terminals with light coloured backgrounds.
+
+### Command Line Interface
+
+Added a `--width` option which allows overriding `DFT_WIDTH`, and is
+more discoverable.
+
+Added a `--color` option which allows explicitly enabling/disabling
+colour output.
+
+Added a `--background` option which controls whether difftastic uses
+bright or dark colours. This can also be controlled by
+`DFT_BACKGROUND`.
+
+Added a `--skip-unchanged` option which suppresses printing for files
+that have no changes.
+
+## 0.17 (released 25 January 2022)
+
+### Diffing
+
+Improved performance when all file changes are close together.
+
+Fixed a bug where syntax after the last changed item was incorrectly
+marked as added.
+
+### Display
+
+Added syntax highlighting for unchanged comments, strings and types.
+
+Fixed a bug (introduced in 0.15) where identical text files were
+reported as binary files.
+
+## 0.16 (released 22 January 2022)
+
+### Parsing
+
+Whitespace in JSX is parsed more closely to React's whitespace
+trimming rules.
+
+Fixed parsing of heredocs in shell scripts. They are now treated as
+string literals.
+
+Fixed parsing of type variables and tags in OCaml.
+
+Improved language detection for files with bash/sh syntax.
+
+### Integration
+
+Fixed a crash when on Mercurial diffs when a whole file has been
+removed.
+
+### Display
+
+Improved display performance when there are a large number of hunks.
+
+Fixed several issues where lines were displayed more than once in a
+hunk.
+
+Fixed an issue where the first changed line was not displayed.
+
+### Diffing
+
+Improved diffing performance (both time and memory usage).
+
+Sliders are now fixed up after diffing. This produces better looking
+results in more cases, and makes the primary diffing faster.
+
+Fixed some corner cases in the line parser where it would match up
+isolated newline character as unchanged, leading to weird alignment.
+
+## 0.15 (released 6 January 2022)
+
+### Parsing
+
+Moved to the [official Elixir
+parser](https://github.com/elixir-lang/tree-sitter-elixir).
+
+Updated the Bash, C, C++, C#, Haskell, Java, OCaml, Python, Ruby and
+TypeScript parsers to the latest upstream version.
+
+Fixed a parsing performance regression introduced in 0.13.
+
+### Diffing
+
+Text diffing now has a standalone implementation rather than reusing
+structural diff logic. This is signficantly faster and highlighted
+better.
+
+Improved performance when diffing two identical files. This is common
+when diffing directorires.
+
+### Display
+
+Improved highlighting heuristics for added/removed blank lines.
+
+Fixed an alignment bug where the last line being novel would lead to
+poor alignment of unchanged lines.
+
+Fixed minor formatting issues when reporting that a file is binary.
+
+Improved display performance on large files.
 
 ## 0.14 (released 27 December 2021)
 
@@ -281,7 +703,7 @@ delimiter over a delimiter that gave contiguous changes.
 Removed the `--width` argument.
 
 Added debug options `--dump-syntax` and `--dump-ts` for viewing parse
-trees. The output of these files may change without notice.
+trees. The output of these options may change without notice.
 
 ## 0.6 (released 27 July 2021)
 

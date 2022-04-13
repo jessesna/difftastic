@@ -8,8 +8,10 @@ const MAX_DISTANCE: usize = 4;
 use std::collections::{HashMap, HashSet};
 
 use crate::{
-    context::{add_context, calculate_context},
+    constants::Side,
+    context::{add_context, opposite_positions, MAX_PADDING},
     lines::LineNumber,
+    side_by_side::lines_with_novel,
     syntax::{zip_pad_shorter, MatchedPos},
 };
 
@@ -17,6 +19,12 @@ use crate::{
 /// together.
 #[derive(Debug, Clone)]
 pub struct Hunk {
+    /// The LHS line numbers that contain novel content.
+    pub novel_lhs: HashSet<LineNumber>,
+    /// The RHS line numbers that contain novel content.
+    pub novel_rhs: HashSet<LineNumber>,
+    /// Line pairs that contain modified lines. This does not include
+    /// padding, so at least one of the two lines has novel content.
     pub lines: Vec<(Option<LineNumber>, Option<LineNumber>)>,
 }
 
@@ -53,10 +61,12 @@ impl Hunk {
             deduped_lines.push((
                 if lhs_is_dupe { None } else { lhs_line },
                 if rhs_is_dupe { None } else { rhs_line },
-            ))
+            ));
         }
 
         Hunk {
+            novel_lhs: self.novel_lhs.union(&other.novel_lhs).copied().collect(),
+            novel_rhs: self.novel_rhs.union(&other.novel_rhs).copied().collect(),
             lines: deduped_lines,
         }
     }
@@ -89,7 +99,7 @@ fn fill_between(
     zip_pad_shorter(&lhs_lines, &rhs_lines)
 }
 
-pub fn extract_lines(hunk: &Hunk) -> Vec<(Option<LineNumber>, Option<LineNumber>)> {
+fn extract_lines(hunk: &Hunk) -> Vec<(Option<LineNumber>, Option<LineNumber>)> {
     let mut min_lhs = None;
     let mut min_rhs = None;
     let mut max_lhs = None;
@@ -124,8 +134,8 @@ pub fn extract_lines(hunk: &Hunk) -> Vec<(Option<LineNumber>, Option<LineNumber>
 
 pub fn merge_adjacent(
     hunks: &[Hunk],
-    lhs_mps: &[MatchedPos],
-    rhs_mps: &[MatchedPos],
+    opposite_to_lhs: &HashMap<LineNumber, HashSet<LineNumber>>,
+    opposite_to_rhs: &HashMap<LineNumber, HashSet<LineNumber>>,
     max_lhs_src_line: LineNumber,
     max_rhs_src_line: LineNumber,
 ) -> Vec<Hunk> {
@@ -140,8 +150,13 @@ pub fn merge_adjacent(
         let mut rhs_lines: HashSet<LineNumber> = HashSet::new();
 
         let lines = extract_lines(hunk);
-        let contextual_lines =
-            add_context(&lines, lhs_mps, rhs_mps, max_lhs_src_line, max_rhs_src_line);
+        let contextual_lines = add_context(
+            &lines,
+            opposite_to_lhs,
+            opposite_to_rhs,
+            max_lhs_src_line,
+            max_rhs_src_line,
+        );
         for (lhs_line, rhs_line) in contextual_lines {
             if let Some(lhs_line) = lhs_line {
                 lhs_lines.insert(lhs_line);
@@ -184,7 +199,7 @@ pub fn merge_adjacent(
     res
 }
 
-fn line_close(
+fn lines_are_close(
     max_lhs: Option<LineNumber>,
     max_rhs: Option<LineNumber>,
     line: (Option<LineNumber>, Option<LineNumber>),
@@ -256,8 +271,38 @@ fn enforce_increasing(
     res
 }
 
+fn find_novel_lines(
+    lines: &[(Option<LineNumber>, Option<LineNumber>)],
+    all_lhs_novel: &HashSet<LineNumber>,
+    all_rhs_novel: &HashSet<LineNumber>,
+) -> (HashSet<LineNumber>, HashSet<LineNumber>) {
+    let mut lhs_novel = HashSet::new();
+    let mut rhs_novel = HashSet::new();
+
+    for (lhs_line, rhs_line) in lines {
+        if let Some(lhs_line) = lhs_line {
+            if all_lhs_novel.contains(lhs_line) {
+                lhs_novel.insert(*lhs_line);
+            }
+        }
+        if let Some(rhs_line) = rhs_line {
+            if all_rhs_novel.contains(rhs_line) {
+                rhs_novel.insert(*rhs_line);
+            }
+        }
+    }
+
+    (lhs_novel, rhs_novel)
+}
+
 /// Split lines into hunks.
-fn lines_to_hunks(lines: &[(Option<LineNumber>, Option<LineNumber>)]) -> Vec<Hunk> {
+fn lines_to_hunks(
+    lines: &[(Option<LineNumber>, Option<LineNumber>)],
+    lhs_mps: &[MatchedPos],
+    rhs_mps: &[MatchedPos],
+) -> Vec<Hunk> {
+    let (all_lhs_novel, all_rhs_novel) = lines_with_novel(lhs_mps, rhs_mps);
+
     let mut hunks = vec![];
     let mut current_hunk_lines = vec![];
     let mut max_lhs_line: Option<LineNumber> = None;
@@ -266,10 +311,14 @@ fn lines_to_hunks(lines: &[(Option<LineNumber>, Option<LineNumber>)]) -> Vec<Hun
     for line in enforce_increasing(lines) {
         let (lhs_line, rhs_line) = line;
 
-        if current_hunk_lines.is_empty() || line_close(max_lhs_line, max_rhs_line, line) {
+        if current_hunk_lines.is_empty() || lines_are_close(max_lhs_line, max_rhs_line, line) {
             current_hunk_lines.push(line);
         } else {
+            let (novel_lhs, novel_rhs) =
+                find_novel_lines(&current_hunk_lines, &all_lhs_novel, &all_rhs_novel);
             hunks.push(Hunk {
+                novel_lhs,
+                novel_rhs,
                 lines: current_hunk_lines,
             });
             current_hunk_lines = vec![line];
@@ -284,7 +333,11 @@ fn lines_to_hunks(lines: &[(Option<LineNumber>, Option<LineNumber>)]) -> Vec<Hun
     }
 
     if !current_hunk_lines.is_empty() {
+        let (novel_lhs, novel_rhs) =
+            find_novel_lines(&current_hunk_lines, &all_lhs_novel, &all_rhs_novel);
         hunks.push(Hunk {
+            novel_lhs,
+            novel_rhs,
             lines: current_hunk_lines,
         });
     }
@@ -292,10 +345,91 @@ fn lines_to_hunks(lines: &[(Option<LineNumber>, Option<LineNumber>)]) -> Vec<Hun
     hunks
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-enum Side {
-    LHS,
-    RHS,
+/// Given a sequence of novel MatchedPos values in a section between
+/// two unchanged MatchedPos values, return them in an order suited
+/// for displaying.
+///
+/// ```text
+/// unchanged-before novel-1
+/// novel-2
+/// novel-3
+/// novel-4 unchanged-after
+/// ```
+///
+/// We need novel-1 to occur before novel-2/3, and novel-2/3 to occur
+/// before novel-4, so we can safely interleave LHS and RHS whilst
+/// still being monotonically increasing.
+fn novel_section_in_order(
+    lhs_novel_mps: &[&MatchedPos],
+    rhs_novel_mps: &[&MatchedPos],
+    lhs_prev_matched_line: Option<LineNumber>,
+    rhs_prev_matched_line: Option<LineNumber>,
+    opposite_to_lhs: &HashMap<LineNumber, HashSet<LineNumber>>,
+    opposite_to_rhs: &HashMap<LineNumber, HashSet<LineNumber>>,
+) -> Vec<(Side, MatchedPos)> {
+    let mut res: Vec<(Side, MatchedPos)> = vec![];
+
+    let mut lhs_iter = lhs_novel_mps.iter().peekable();
+    let mut rhs_iter = rhs_novel_mps.iter().peekable();
+
+    // Novel MatchedPos values that occur on the same line as the
+    // previous unchanged MatchedPos must occur first.
+    while let Some(lhs_mp) = lhs_iter.peek() {
+        let same_line_as_prev = if let Some(lhs_prev_matched_line) = lhs_prev_matched_line {
+            lhs_mp.pos.line == lhs_prev_matched_line
+        } else {
+            false
+        };
+        if same_line_as_prev {
+            res.push((Side::Left, (**lhs_mp).clone()));
+            lhs_iter.next();
+        } else {
+            break;
+        }
+    }
+    while let Some(rhs_mp) = rhs_iter.peek() {
+        let same_line_as_prev = if let Some(rhs_prev_matched_line) = rhs_prev_matched_line {
+            rhs_mp.pos.line == rhs_prev_matched_line
+        } else {
+            false
+        };
+        if same_line_as_prev {
+            res.push((Side::Right, (**rhs_mp).clone()));
+            rhs_iter.next();
+        } else {
+            break;
+        }
+    }
+
+    // Next, we want novel MatchedPos values that occur on lines
+    // without any unchanged MatchedPos values.
+    while let Some(lhs_mp) = lhs_iter.peek() {
+        if !opposite_to_lhs.contains_key(&lhs_mp.pos.line) {
+            res.push((Side::Left, (**lhs_mp).clone()));
+            lhs_iter.next();
+        } else {
+            break;
+        }
+    }
+    while let Some(rhs_mp) = rhs_iter.peek() {
+        if !opposite_to_rhs.contains_key(&rhs_mp.pos.line) {
+            res.push((Side::Right, (**rhs_mp).clone()));
+            rhs_iter.next();
+        } else {
+            break;
+        }
+    }
+
+    // Finally, the remainder of the novel MatchedPos values will be
+    // on the same line as the following unchanged MatchedPos value.
+    for lhs_mp in lhs_iter {
+        res.push((Side::Left, (*lhs_mp).clone()));
+    }
+    for rhs_mp in rhs_iter {
+        res.push((Side::Right, (*rhs_mp).clone()));
+    }
+
+    res
 }
 
 /// Return a vec of novel MatchedPos values in an order suited for
@@ -307,6 +441,8 @@ enum Side {
 fn sorted_novel_positions(
     lhs_mps: &[MatchedPos],
     rhs_mps: &[MatchedPos],
+    opposite_to_lhs: &HashMap<LineNumber, HashSet<LineNumber>>,
+    opposite_to_rhs: &HashMap<LineNumber, HashSet<LineNumber>>,
 ) -> Vec<(Side, MatchedPos)> {
     let mut lhs_mps: Vec<MatchedPos> = lhs_mps.to_vec();
     lhs_mps.sort_unstable_by_key(|mp| mp.pos);
@@ -314,339 +450,217 @@ fn sorted_novel_positions(
     let mut rhs_mps: Vec<MatchedPos> = rhs_mps.to_vec();
     rhs_mps.sort_unstable_by_key(|mp| mp.pos);
 
-    let mut lhs_prev_opposite = None;
-    let mut rhs_prev_opposite = None;
-
     let mut res: Vec<(Side, MatchedPos)> = vec![];
-    let mut lhs_i = 0;
-    let mut rhs_i = 0;
-    while let (Some(lhs_mp), Some(rhs_mp)) = (lhs_mps.get(lhs_i), rhs_mps.get(rhs_i)) {
-        match (
-            lhs_mp.kind.first_opposite_span(),
-            rhs_mp.kind.first_opposite_span(),
-        ) {
-            (Some(lhs_opposite_span), _) => {
-                // This is an unchanged position, so just update the
-                // opposite position.
-                lhs_prev_opposite = Some(lhs_opposite_span);
-                lhs_i += 1;
+
+    let mut lhs_prev_matched_line = None;
+    let mut rhs_prev_matched_line = None;
+    let mut lhs_novel_section = vec![];
+    let mut rhs_novel_section = vec![];
+
+    let mut lhs_iter = lhs_mps.iter().peekable();
+    let mut rhs_iter = rhs_mps.iter().peekable();
+    loop {
+        match (lhs_iter.peek(), rhs_iter.peek()) {
+            (Some(lhs_mp), Some(rhs_mp)) if !lhs_mp.kind.is_novel() && !rhs_mp.kind.is_novel() => {
+                res.append(&mut novel_section_in_order(
+                    &lhs_novel_section,
+                    &rhs_novel_section,
+                    lhs_prev_matched_line,
+                    rhs_prev_matched_line,
+                    opposite_to_lhs,
+                    opposite_to_rhs,
+                ));
+                lhs_novel_section = vec![];
+                rhs_novel_section = vec![];
+
+                lhs_prev_matched_line = Some(lhs_mp.pos.line);
+                rhs_prev_matched_line = Some(rhs_mp.pos.line);
+                lhs_iter.next();
+                rhs_iter.next();
             }
-            (_, Some(rhs_opposite_span)) => {
-                // This is an unchanged position, so just update the
-                // opposite position.
-                rhs_prev_opposite = Some(rhs_opposite_span);
-                rhs_i += 1;
+            (Some(lhs_mp), _) if lhs_mp.kind.is_novel() => {
+                lhs_novel_section.push(lhs_mp);
+                lhs_iter.next();
+            }
+            (_, Some(rhs_mp)) if rhs_mp.kind.is_novel() => {
+                rhs_novel_section.push(rhs_mp);
+                rhs_iter.next();
             }
             (None, None) => {
-                assert!(lhs_mp.kind.is_change());
-                assert!(rhs_mp.kind.is_change());
+                break;
+            }
+            (lhs_mp, rhs_mp) => {
+                unreachable!("Should be impossible: every LHS Unchanged MatchedPos should have a corresponding RHS Unchanged MatchedPos\n  {:?}\n  {:?}", lhs_mp, rhs_mp);
+            }
+        }
+    }
 
-                match (lhs_prev_opposite, rhs_prev_opposite) {
-                    (None, _) => {
-                        // If we see a novel LHS position and we don't
-                        // have a previous matched position, put it
-                        // first.
-                        res.push((Side::LHS, lhs_mp.clone()));
-                        lhs_i += 1;
-                    }
-                    (_, None) => {
-                        // If we see a novel RHS position and we don't
-                        // have a previous matched position,
-                        // arbitrarily put it after novel LHS
-                        // positions. This prevents incorrect
-                        // interleaving.
-                        res.push((Side::RHS, rhs_mp.clone()));
-                        rhs_i += 1;
-                    }
-                    (Some(lhs_prev_opposite), Some(_)) => {
-                        // Both sides are novel. Take the side with the earlier opposite position.
-                        if lhs_prev_opposite < rhs_mp.pos {
-                            res.push((Side::LHS, lhs_mp.clone()));
-                            lhs_i += 1;
-                        } else {
-                            res.push((Side::RHS, rhs_mp.clone()));
-                            rhs_i += 1;
-                        }
-                    }
+    res.append(&mut novel_section_in_order(
+        &lhs_novel_section,
+        &rhs_novel_section,
+        lhs_prev_matched_line,
+        rhs_prev_matched_line,
+        opposite_to_lhs,
+        opposite_to_rhs,
+    ));
+
+    res
+}
+
+fn next_opposite(
+    line: LineNumber,
+    opposites: &HashMap<LineNumber, HashSet<LineNumber>>,
+    prev_opposite: Option<LineNumber>,
+) -> Option<LineNumber> {
+    opposites.get(&line).and_then(|lines_set| {
+        let mut lines: Vec<LineNumber> = lines_set.iter().copied().collect();
+        lines.sort_unstable();
+
+        lines.into_iter().find(|ln| {
+            if let Some(prev_opposite) = prev_opposite {
+                *ln > prev_opposite
+            } else {
+                true
+            }
+        })
+    })
+}
+
+fn matched_novel_lines(
+    lhs_mps: &[MatchedPos],
+    rhs_mps: &[MatchedPos],
+) -> Vec<(Option<LineNumber>, Option<LineNumber>)> {
+    let mut highest_lhs: Option<LineNumber> = None;
+    let mut highest_rhs: Option<LineNumber> = None;
+
+    let opposite_to_lhs = opposite_positions(lhs_mps);
+    let opposite_to_rhs = opposite_positions(rhs_mps);
+
+    let mut lines: Vec<(Option<LineNumber>, Option<LineNumber>)> = vec![];
+    for (side, mp) in sorted_novel_positions(lhs_mps, rhs_mps, &opposite_to_lhs, &opposite_to_rhs) {
+        let self_line = mp.pos.line;
+
+        match side {
+            Side::Left => {
+                let should_append = if let Some(highest_lhs) = highest_lhs {
+                    self_line > highest_lhs
+                } else {
+                    true
+                };
+                if should_append {
+                    lines.push((
+                        Some(self_line),
+                        next_opposite(self_line, &opposite_to_lhs, highest_rhs),
+                    ));
+                    highest_lhs = Some(self_line);
+                }
+            }
+            Side::Right => {
+                let should_append = if let Some(highest_rhs) = highest_rhs {
+                    self_line > highest_rhs
+                } else {
+                    true
+                };
+                if should_append {
+                    lines.push((
+                        next_opposite(self_line, &opposite_to_rhs, highest_rhs),
+                        Some(self_line),
+                    ));
+                    highest_rhs = Some(self_line);
                 }
             }
         }
     }
 
-    while let Some(lhs_mp) = lhs_mps.get(lhs_i) {
-        if lhs_mp.kind.is_change() {
-            res.push((Side::LHS, lhs_mp.clone()));
-        }
-        lhs_i += 1;
-    }
-    while let Some(rhs_mp) = rhs_mps.get(rhs_i) {
-        if rhs_mp.kind.is_change() {
-            res.push((Side::RHS, rhs_mp.clone()));
-        }
-        rhs_i += 1;
-    }
-
-    res
+    lines
 }
 
 pub fn matched_pos_to_hunks(lhs_mps: &[MatchedPos], rhs_mps: &[MatchedPos]) -> Vec<Hunk> {
-    let mut lines: Vec<(Option<LineNumber>, Option<LineNumber>)> = vec![];
-    for (side, mp) in sorted_novel_positions(lhs_mps, rhs_mps) {
-        let self_line = mp.pos.line;
-        let opposite_line = mp.kind.first_opposite_span().map(|span| span.line);
-
-        let line = match side {
-            Side::LHS => (Some(self_line), opposite_line),
-            Side::RHS => (opposite_line, Some(self_line)),
-        };
-        lines.push(line);
-    }
-
-    lines_to_hunks(&lines)
+    lines_to_hunks(&matched_novel_lines(lhs_mps, rhs_mps), lhs_mps, rhs_mps)
 }
 
-/// Ensure that we don't miss any intermediate values.
-///
-/// Before:
-///
-/// ```text
-/// 1 11
-/// 3 14
-/// 4 --
-/// ```
-///
-/// After:
-///
-/// ```text
-/// 1 10
-/// 2 12 (choosing to align even though content doesn't match)
-/// - 13 (fix uneven gap)
-/// 3 14
-/// 4 -- (preserve outer gaps)
-/// ```
-fn ensure_contiguous(
-    lines: &[(Option<LineNumber>, Option<LineNumber>)],
-) -> Vec<(Option<LineNumber>, Option<LineNumber>)> {
-    let mut res: Vec<(Option<LineNumber>, Option<LineNumber>)> = vec![];
-
-    let mut lhs_min: Option<LineNumber> = None;
-    let mut rhs_min: Option<LineNumber> = None;
-
-    for (lhs_line, rhs_line) in lines {
-        if let Some(lhs_line) = lhs_line {
-            if let Some(lhs_prev_min) = lhs_min {
-                if lhs_prev_min.0 + 1 != lhs_line.0 {
-                    res.extend((lhs_prev_min.0 + 1..lhs_line.0).map(|l| (Some(l.into()), None)));
-                }
-            }
-            lhs_min = Some(*lhs_line);
+fn either_side_equal(
+    x: &(Option<LineNumber>, Option<LineNumber>),
+    y: &(Option<LineNumber>, Option<LineNumber>),
+) -> bool {
+    let (lhs_x, rhs_x) = x;
+    let (lhs_y, rhs_y) = y;
+    if let (Some(lhs_x), Some(lhs_y)) = (lhs_x, lhs_y) {
+        if lhs_x == lhs_y {
+            return true;
         }
-        if let Some(rhs_line) = rhs_line {
-            if let Some(rhs_prev_min) = rhs_min {
-                if rhs_prev_min.0 + 1 != rhs_line.0 {
-                    res.extend((rhs_prev_min.0 + 1..rhs_line.0).map(|r| (None, Some(r.into()))));
-                }
-            }
-            rhs_min = Some(*rhs_line);
-        }
-        res.push((*lhs_line, *rhs_line));
     }
-
-    res
-}
-
-/// Fill matched pairs from `start` to end.
-///
-/// 10 20
-/// 11 25
-/// 17 31
-///
-/// Pairs are monotonically increasing, but may have gaps.
-///
-fn fill_aligned(
-    start: (LineNumber, LineNumber),
-    end: (LineNumber, LineNumber),
-    matched_rhs_lines: &HashMap<LineNumber, HashSet<LineNumber>>,
-) -> Vec<(LineNumber, LineNumber)> {
-    let mut res = vec![];
-
-    let mut lhs_current = start.0;
-    let mut rhs_max_so_far = start.1;
-
-    let (lhs_max, rhs_max) = end;
-
-    while lhs_current < lhs_max {
-        lhs_current = (lhs_current.0 + 1).into();
-
-        let empty = HashSet::new();
-        let mut opposite_lines: Vec<LineNumber> = matched_rhs_lines
-            .get(&lhs_current)
-            .unwrap_or(&empty)
-            .iter()
-            .copied()
-            .filter(|ln| *ln > rhs_max_so_far && *ln < rhs_max)
-            .collect();
-        opposite_lines.sort();
-
-        if let Some(opposite_line) = opposite_lines.first() {
-            res.push((lhs_current, *opposite_line));
-            rhs_max_so_far = *opposite_line;
+    if let (Some(rhs_x), Some(rhs_y)) = (rhs_x, rhs_y) {
+        if rhs_x == rhs_y {
+            return true;
         }
     }
 
-    res
+    false
 }
 
-/// Find the first pair in this vec where both items are Some. Return
-/// that pair, plus all the items that occur afterwards.
-fn split_first_pair(
-    items: Vec<(Option<LineNumber>, Option<LineNumber>)>,
-) -> (
-    Option<(LineNumber, LineNumber)>,
-    Vec<(Option<LineNumber>, Option<LineNumber>)>,
-) {
-    for (i, (lhs_line, rhs_line)) in items.iter().copied().enumerate() {
-        if let (Some(lhs_line), Some(rhs_line)) = (lhs_line, rhs_line) {
-            let after_items: Vec<(Option<LineNumber>, Option<LineNumber>)> =
-                items[i..].iter().copied().collect();
-            return (Some((lhs_line, rhs_line)), after_items);
-        }
-    }
-
-    (None, items)
-}
-
-fn split_last_pair(
-    items: Vec<(Option<LineNumber>, Option<LineNumber>)>,
-) -> (
-    Option<(LineNumber, LineNumber)>,
-    Vec<(Option<LineNumber>, Option<LineNumber>)>,
-) {
-    let mut items = items;
-    items.reverse();
-
-    let (last_pair, mut before_items) = split_first_pair(items);
-    before_items.reverse();
-
-    (last_pair, before_items)
-}
-
-/// Before:
-///
-/// 10 --
-/// 11 --
-/// -- 20
-/// 12 21
-///
-/// After:
-///
-/// 10 20
-/// 11 --
-/// 12 21
-///
-/// The returned vec will contain no (None, None) pairs.
-fn compact_gaps(
-    items: Vec<(Option<LineNumber>, Option<LineNumber>)>,
-) -> Vec<(Option<LineNumber>, Option<LineNumber>)> {
-    let mut res: Vec<(Option<LineNumber>, Option<LineNumber>)> = vec![];
-    // A vec of the most recent single-sided lines, e.g.
-    //
-    // 10 --
-    // 11 --
-    //
-    // All items must be Some on the same side.
-    let mut one_side_lines: Vec<(Option<LineNumber>, Option<LineNumber>)> = vec![];
-
-    for (lhs_line, rhs_line) in items.into_iter() {
-        match (lhs_line, rhs_line) {
-            (Some(lhs_line), None) => {
-                match one_side_lines.first() {
-                    Some((None, Some(rhs_line))) => {
-                        // We've found a line that can be compacted.
-                        res.push((Some(lhs_line), Some(*rhs_line)));
-                        one_side_lines.remove(0);
-                    }
-                    _ => {
-                        // We can't compact this item, so start new chunk.
-                        res.extend(one_side_lines);
-                        one_side_lines = vec![(Some(lhs_line), None)];
-                    }
-                }
-            }
-            (None, Some(rhs_line)) => {
-                match one_side_lines.first() {
-                    Some((Some(lhs_line), None)) => {
-                        // We've found a line that can be compacted.
-                        res.push((Some(*lhs_line), Some(rhs_line)));
-                        one_side_lines.remove(0);
-                    }
-                    _ => {
-                        // We can't compact this item, so start new chunk of one-side lines.
-                        res.extend(one_side_lines);
-                        one_side_lines = vec![(None, Some(rhs_line))];
-                    }
-                }
-            }
-            _ => {
-                res.extend(one_side_lines);
-                one_side_lines = vec![];
-                res.push((lhs_line, rhs_line));
-            }
-        }
-    }
-
-    res.extend(one_side_lines);
-    res
-}
-
-pub fn aligned_lines_from_hunk(
+pub fn matched_lines_for_hunk(
+    matched_lines: &[(Option<LineNumber>, Option<LineNumber>)],
     hunk: &Hunk,
-    lhs_mps: &[MatchedPos],
-    rhs_mps: &[MatchedPos],
-    max_lhs_src_line: LineNumber,
-    max_rhs_src_line: LineNumber,
-    matched_rhs_lines: &HashMap<LineNumber, HashSet<LineNumber>>,
 ) -> Vec<(Option<LineNumber>, Option<LineNumber>)> {
-    let hunk_lines: Vec<(Option<LineNumber>, Option<LineNumber>)> = hunk.lines.clone();
+    let mut hunk_lhs_novel = hunk.novel_lhs.iter().copied().collect::<Vec<_>>();
+    hunk_lhs_novel.sort();
 
-    let (before_context, after_context) = calculate_context(
-        &hunk_lines,
-        lhs_mps,
-        rhs_mps,
-        max_lhs_src_line,
-        max_rhs_src_line,
+    let mut hunk_rhs_novel = hunk.novel_rhs.iter().copied().collect::<Vec<_>>();
+    hunk_rhs_novel.sort();
+
+    let hunk_smallest = (
+        hunk_lhs_novel.first().copied(),
+        hunk_rhs_novel.first().copied(),
+    );
+    let hunk_largest = (
+        hunk_lhs_novel.last().copied(),
+        hunk_rhs_novel.last().copied(),
     );
 
-    let (start_pair, before_context) = split_last_pair(before_context);
-    let (end_pair, after_context) = split_first_pair(after_context);
-
-    let mut res: Vec<(Option<LineNumber>, Option<LineNumber>)> = vec![];
-    res.extend(before_context);
-    if let (Some(start_pair), Some(end_pair)) = (start_pair, end_pair) {
-        // Fill lines between.
-        let aligned_between = fill_aligned(start_pair, end_pair, matched_rhs_lines);
-
-        // TODO: align based on blank lines too.
-
-        res.extend(aligned_between.iter().map(|(x, y)| (Some(*x), Some(*y))));
-    } else {
-        // We weren't able to find both a start pair and an end pair,
-        // so we can't fill between. Use the hunk lines as-is.
-        res.extend(hunk_lines);
+    // TODO: Use binary search instead.
+    let mut start_i = None;
+    for (i, matched_line) in matched_lines.iter().enumerate() {
+        if either_side_equal(matched_line, &hunk_smallest) {
+            start_i = Some(i);
+            break;
+        }
     }
 
-    res.extend(after_context);
+    let mut end_i = None;
+    for (i, matched_line) in matched_lines.iter().enumerate().rev() {
+        if either_side_equal(matched_line, &hunk_largest) {
+            end_i = Some(i + 1);
+            break;
+        }
+    }
 
-    compact_gaps(ensure_contiguous(&res))
+    let mut start_i = start_i.expect("Hunk lines should be present in matched lines");
+    let mut end_i = end_i.expect("Hunk lines should be present in matched lines");
+    if start_i >= MAX_PADDING {
+        start_i -= MAX_PADDING;
+    } else {
+        start_i = 0;
+    }
+    if end_i + MAX_PADDING < matched_lines.len() {
+        end_i += MAX_PADDING
+    } else {
+        end_i = matched_lines.len();
+    }
+
+    matched_lines[start_i..end_i].to_vec()
 }
 
 #[cfg(test)]
 mod tests {
+    use std::iter::FromIterator;
+
     use super::*;
     use crate::{
         positions::SingleLineSpan,
         syntax::{MatchKind, TokenKind},
     };
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_sorted_novel_positions_simple() {
@@ -661,24 +675,18 @@ mod tests {
             },
         };
         let matched_mp = MatchedPos {
-            kind: MatchKind::Unchanged {
+            kind: MatchKind::UnchangedToken {
                 highlight: TokenKind::Delimiter,
-                self_pos: (
-                    vec![SingleLineSpan {
-                        line: 1.into(),
-                        start_col: 1,
-                        end_col: 2,
-                    }],
-                    vec![],
-                ),
-                opposite_pos: (
-                    vec![SingleLineSpan {
-                        line: 2.into(),
-                        start_col: 1,
-                        end_col: 2,
-                    }],
-                    vec![],
-                ),
+                self_pos: vec![SingleLineSpan {
+                    line: 1.into(),
+                    start_col: 1,
+                    end_col: 2,
+                }],
+                opposite_pos: vec![SingleLineSpan {
+                    line: 2.into(),
+                    start_col: 1,
+                    end_col: 2,
+                }],
             },
             pos: SingleLineSpan {
                 line: 1.into(),
@@ -687,9 +695,128 @@ mod tests {
             },
         };
 
-        let lhs_mps = vec![novel_mp.clone(), matched_mp];
-        let res = sorted_novel_positions(&lhs_mps, &[]);
+        let lhs_mps = vec![novel_mp.clone(), matched_mp.clone()];
+        let res = sorted_novel_positions(&lhs_mps, &[matched_mp], &HashMap::new(), &HashMap::new());
 
-        assert_eq!(res, vec![(Side::LHS, novel_mp)]);
+        assert_eq!(res, vec![(Side::Left, novel_mp)]);
+    }
+
+    #[test]
+    fn test_matched_pos_to_hunks() {
+        let matched_pos = SingleLineSpan {
+            line: 0.into(),
+            start_col: 2,
+            end_col: 3,
+        };
+
+        let lhs_mps = [
+            MatchedPos {
+                kind: MatchKind::Novel {
+                    highlight: TokenKind::Delimiter,
+                },
+                pos: SingleLineSpan {
+                    line: 0.into(),
+                    start_col: 1,
+                    end_col: 2,
+                },
+            },
+            MatchedPos {
+                kind: MatchKind::UnchangedToken {
+                    highlight: TokenKind::Delimiter,
+                    self_pos: vec![matched_pos],
+                    opposite_pos: vec![matched_pos],
+                },
+                pos: matched_pos,
+            },
+        ];
+
+        let rhs_mps = [
+            MatchedPos {
+                kind: MatchKind::Novel {
+                    highlight: TokenKind::Delimiter,
+                },
+                pos: SingleLineSpan {
+                    line: 0.into(),
+                    start_col: 1,
+                    end_col: 2,
+                },
+            },
+            MatchedPos {
+                kind: MatchKind::UnchangedToken {
+                    highlight: TokenKind::Delimiter,
+                    self_pos: vec![matched_pos],
+                    opposite_pos: vec![matched_pos],
+                },
+                pos: matched_pos,
+            },
+        ];
+
+        let hunks = matched_pos_to_hunks(&lhs_mps, &rhs_mps);
+        assert_eq!(hunks.len(), 1);
+        assert_eq!(hunks[0].lines, vec![(Some(0.into()), Some(0.into()))]);
+    }
+
+    #[test]
+    fn test_matched_lines_for_hunk() {
+        let matched_lines = &[
+            (Some(0.into()), Some(0.into())),
+            (Some(1.into()), Some(1.into())),
+            (Some(2.into()), Some(2.into())),
+        ];
+
+        let novel_lhs = HashSet::from_iter([1.into()]);
+        let novel_rhs = HashSet::from_iter([1.into()]);
+        let hunk = Hunk {
+            novel_lhs,
+            novel_rhs,
+            lines: vec![(Some(1.into()), Some(1.into()))],
+        };
+
+        let res = matched_lines_for_hunk(matched_lines, &hunk);
+        assert_eq!(
+            res,
+            vec![
+                (Some(0.into()), Some(0.into())),
+                (Some(1.into()), Some(1.into())),
+                (Some(2.into()), Some(2.into())),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_matched_lines_for_hunk_misaligned() {
+        let matched_lines = &[
+            (Some(0.into()), Some(0.into())),
+            (Some(1.into()), Some(1.into())),
+            (Some(2.into()), Some(2.into())),
+            (Some(3.into()), Some(3.into())),
+            (Some(4.into()), Some(4.into())),
+            (Some(5.into()), Some(5.into())),
+        ];
+
+        let novel_lhs = HashSet::from_iter([1.into()]);
+        let novel_rhs = HashSet::from_iter([2.into()]);
+        let hunk = Hunk {
+            novel_lhs,
+            novel_rhs,
+            // LHS and RHS are misaligned
+            lines: vec![(Some(1.into()), Some(2.into()))],
+        };
+
+        let res = matched_lines_for_hunk(matched_lines, &hunk);
+        assert_eq!(
+            res,
+            vec![
+                (Some(0.into()), Some(0.into())),
+                (Some(1.into()), Some(1.into())),
+                (Some(2.into()), Some(2.into())),
+                // We want to show the full 3 lines of padding after
+                // the lower of the two lines, so up to line 5
+                // inclusive.
+                (Some(3.into()), Some(3.into())),
+                (Some(4.into()), Some(4.into())),
+                (Some(5.into()), Some(5.into())),
+            ]
+        );
     }
 }

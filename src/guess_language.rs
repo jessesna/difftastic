@@ -25,26 +25,39 @@ pub enum Language {
     CPlusPlus,
     CSharp,
     Css,
+    Dart,
     Elixir,
+    Elm,
     EmacsLisp,
+    Gleam,
     Go,
     Haskell,
+    JanetSimple,
     Java,
     JavaScript,
     Json,
     Jsx,
+    Lua,
+    Nix,
     OCaml,
     OCamlInterface,
+    Php,
     Python,
     Ruby,
     Rust,
+    Scala,
     Tsx,
     TypeScript,
+    Yaml,
+    Zig,
 }
 
 use Language::*;
 
 pub fn guess(path: &Path, src: &str) -> Option<Language> {
+    if let Some(lang) = from_emacs_mode_header(src) {
+        return Some(lang);
+    }
     if let Some(lang) = from_shebang(src) {
         return Some(lang);
     }
@@ -53,9 +66,68 @@ pub fn guess(path: &Path, src: &str) -> Option<Language> {
     }
 
     match path.extension() {
-        Some(extension) => from_extension(extension),
+        Some(extension) => match from_extension(extension) {
+            Some(Language::Php) if src.starts_with("<?hh") => None,
+            language => language,
+        },
         None => None,
     }
+}
+
+/// Try to guess the language based on an Emacs mode comment at the
+/// beginning of the file.
+///
+/// <https://www.gnu.org/software/emacs/manual/html_node/emacs/Choosing-Modes.html>
+/// <https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html>
+fn from_emacs_mode_header(src: &str) -> Option<Language> {
+    lazy_static! {
+        static ref MODE_RE: Regex = Regex::new(r"-\*-.*mode:([^;]+?);.*-\*-").unwrap();
+        static ref SHORTHAND_RE: Regex = Regex::new(r"-\*-(.+)-\*-").unwrap();
+    }
+
+    // Emacs allows the mode header to occur on the second line if the
+    // first line is a shebang.
+    for line in src.lines().take(2) {
+        let mode_name: String = match (MODE_RE.captures(line), SHORTHAND_RE.captures(line)) {
+            (Some(cap), _) => cap[1].into(),
+            (_, Some(cap)) => cap[1].into(),
+            _ => "".into(),
+        };
+        let lang = match mode_name.to_ascii_lowercase().trim().borrow() {
+            "c" => Some(C),
+            "clojure" => Some(Clojure),
+            "csharp" => Some(CSharp),
+            "css" => Some(Css),
+            "dart" => Some(Dart),
+            "c++" => Some(CPlusPlus),
+            "elixir" => Some(Elixir),
+            "elm" => Some(Elm),
+            "emacs-lisp" => Some(EmacsLisp),
+            "gleam" => Some(Gleam),
+            "go" => Some(Go),
+            "haskell" => Some(Haskell),
+            "janet" => Some(JanetSimple),
+            "java" => Some(Java),
+            "js" | "js2" => Some(JavaScript),
+            "lisp" => Some(CommonLisp),
+            "python" => Some(Python),
+            "rjsx" => Some(Jsx),
+            "ruby" => Some(Ruby),
+            "rust" => Some(Rust),
+            "scala" => Some(Scala),
+            "sh" => Some(Bash),
+            "tuareg" => Some(OCaml),
+            "typescript" => Some(TypeScript),
+            "yaml" => Some(Yaml),
+            "zig" => Some(Zig),
+            _ => None,
+        };
+        if lang.is_some() {
+            return lang;
+        }
+    }
+
+    None
 }
 
 /// Try to guess the language based on a shebang present in the source.
@@ -68,7 +140,9 @@ fn from_shebang(src: &str) -> Option<Language> {
             let interpreter_path = Path::new(&cap[1]);
             if let Some(name) = interpreter_path.file_name() {
                 match name.to_string_lossy().borrow() {
-                    "bash" | "dash" | "sh" | "rc" | "zsh" => return Some(Bash),
+                    "ash" | "bash" | "dash" | "ksh" | "mksh" | "pdksh" | "rc" | "sh" | "zsh" => {
+                        return Some(Bash)
+                    }
                     "tcc" => return Some(C),
                     "lisp" | "sbc" | "ccl" | "clisp" | "ecl" => return Some(CommonLisp),
                     "elixir" => return Some(Elixir),
@@ -82,7 +156,7 @@ fn from_shebang(src: &str) -> Option<Language> {
                     _ => {}
                 }
             }
-        };
+        }
     }
 
     None
@@ -91,7 +165,12 @@ fn from_shebang(src: &str) -> Option<Language> {
 fn from_name(path: &Path) -> Option<Language> {
     match path.file_name() {
         Some(name) => match name.to_string_lossy().borrow() {
-            ".bashrc" | ".bash_profile" | ".profile" => Some(Bash),
+            ".bash_aliases" | ".bash_history" | ".bash_logout" | ".bash_profile" | ".bashrc"
+            | ".cshrc" | ".env" | ".env.example" | ".flaskenv" | ".kshrc" | ".login"
+            | ".profile" | ".zlogin" | ".zlogout" | ".zprofile" | ".zshenv" | ".zshrc" | "9fs"
+            | "PKGBUILD" | "bash_aliases" | "bash_logout" | "bash_profile" | "bashrc" | "cshrc"
+            | "gradlew" | "kshrc" | "login" | "man" | "profile" | "zlogin" | "zlogout"
+            | "zprofile" | "zshenv" | "zshrc" => Some(Bash),
             ".emacs" | "_emacs" | "Cask" => Some(EmacsLisp),
             "TARGETS" | "BUCK" | "DEPS" => Some(Python),
             "Gemfile" | "Rakefile" => Some(Ruby),
@@ -101,15 +180,10 @@ fn from_name(path: &Path) -> Option<Language> {
     }
 }
 
-fn from_extension(extension: &OsStr) -> Option<Language> {
-    // TODO: find a nice way to extract name and extension information
-    // from the package.json in these parsers.
-    // TODO: consider using
-    // https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-    // as a source of extensions.
-    // TODO: support files without extensions, such as .bashrc.
+pub fn from_extension(extension: &OsStr) -> Option<Language> {
     match extension.to_string_lossy().borrow() {
-        "bash" | "sh" => Some(Bash),
+        "sh" | "bash" | "bats" | "cgi" | "command" | "env" | "fcgi" | "ksh" | "sh.in" | "tmux"
+        | "tool" | "zsh" => Some(Bash),
         "c" => Some(C),
         // Treat .h as C++ rather than C. This is an arbitrary choice,
         // but C++ is more widely used than C according to
@@ -121,24 +195,34 @@ fn from_extension(extension: &OsStr) -> Option<Language> {
         "bb" | "boot" | "clj" | "cljc" | "clje" | "cljs" | "cljx" | "edn" | "joke" | "joker" => {
             Some(Clojure)
         }
+        "lisp" | "lsp" | "asd" => Some(CommonLisp),
         "cs" => Some(CSharp),
         "css" => Some(Css),
+        "dart" => Some(Dart),
         "el" => Some(EmacsLisp),
+        "elm" => Some(Elm),
         "ex" | "exs" => Some(Elixir),
+        "gleam" => Some(Gleam),
         "go" => Some(Go),
         "hs" => Some(Haskell),
+        "janet" | "jdn" => Some(JanetSimple),
         "java" => Some(Java),
         "cjs" | "js" | "mjs" => Some(JavaScript),
         "jsx" => Some(Jsx),
         "json" => Some(Json),
-        "lisp" | "lsp" | "asd" => Some(CommonLisp),
+        "lua" => Some(Lua),
+        "nix" => Some(Nix),
         "ml" => Some(OCaml),
         "mli" => Some(OCamlInterface),
+        "php" => Some(Php),
         "py" | "py3" | "pyi" | "bzl" => Some(Python),
         "rb" | "builder" | "spec" | "rake" => Some(Ruby),
         "rs" => Some(Rust),
+        "scala" | "sbt" | "sc" => Some(Scala),
         "ts" => Some(TypeScript),
         "tsx" => Some(Tsx),
+        "yaml" | "yml" => Some(Yaml),
+        "zig" => Some(Zig),
         _ => None,
     }
 }
@@ -170,5 +254,41 @@ mod tests {
     fn test_guess_by_env_shebang() {
         let path = Path::new("foo");
         assert_eq!(guess(path, "#!/usr/bin/env python"), Some(Python));
+    }
+
+    #[test]
+    fn test_guess_by_emacs_mode() {
+        let path = Path::new("foo");
+        assert_eq!(
+            guess(path, "; -*- mode: Lisp; eval: (auto-fill-mode 1); -*-"),
+            Some(CommonLisp)
+        );
+    }
+
+    #[test]
+    fn test_guess_by_emacs_mode_second_line() {
+        let path = Path::new("foo");
+        assert_eq!(
+            guess(path, "#!/bin/bash\n; -*- mode: Lisp; -*-"),
+            Some(CommonLisp)
+        );
+    }
+
+    #[test]
+    fn test_guess_by_emacs_mode_shorthand() {
+        let path = Path::new("foo");
+        assert_eq!(guess(path, "(* -*- tuareg -*- *)"), Some(OCaml));
+    }
+
+    #[test]
+    fn test_guess_by_emacs_mode_shorthand_no_spaces() {
+        let path = Path::new("foo");
+        assert_eq!(guess(path, "# -*-python-*-"), Some(Python));
+    }
+
+    #[test]
+    fn test_guess_unknown() {
+        let path = Path::new("jfkdlsjfkdsljfkdsljf");
+        assert_eq!(guess(path, ""), None);
     }
 }

@@ -86,7 +86,7 @@ If you have a file that's particularly slow, you can use
 which functions are slow.
 
 ```
-$ cargo flamegraph --bin difft sample_files/slow_before.rs sample_files/slow_after.rs
+$ CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --bin difft sample_files/slow_before.rs sample_files/slow_after.rs
 ```
 
 It's also worth looking at memory usage, as graph traversal bugs can
@@ -101,6 +101,7 @@ instructions executed, which is more stable.
 
 ```
 $ perf stat ./target/release/difft sample_files/slow_before.rs sample_files/slow_after.rs
+$ perf stat ./target/release/difft sample_files/typing_old.ml sample_files/typing_new.ml
 ```
 
 Many more profiling techniques are discussed in the [The Rust
@@ -108,13 +109,11 @@ Performance Book](https://nnethercote.github.io/perf-book/).
 
 ## Releasing
 
-Use Cargo to create a new release, and tag it in git.
+Use Cargo to create a new release, and tag it in git. Difftastic has a
+helper script for this:
 
 ```
-$ cargo publish
-$ VERSION=$(cargo metadata | jq -r '.packages | .[] | select(.name == "difftastic") | .version')
-$ git tag $VERSION
-$ git push --tags
+$ ./scripts/release.sh
 ```
 
 You can now increment the version in Cargo.toml and add a new entry to

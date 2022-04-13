@@ -10,18 +10,27 @@ tool that understands syntax. It supports the following languages:
 * Clojure
 * Common Lisp
 * CSS
+* Dart
 * Elixir
 * Emacs Lisp
+* Gleam
 * Go
 * Haskell
+* Janet
 * Java
 * JavaScript (and JSX)
 * JSON
+* Lua
+* Nix
 * OCaml
+* PHP
 * Python
 * Ruby
 * Rust
+* Scala
 * TypeScript (and TSX)
+* YAML
+* Zig
 
 When it works, it's *fantastic*.
 

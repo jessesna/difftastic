@@ -1,75 +1,109 @@
-================================================================================
+=====================================
 atom
-================================================================================
+=====================================
 
-{:runtime, :time_μs, :"£", "£", '£', :こんにちは世界, :Ólá, :olá, :Olá}
+:time_μs
+:"£"
+:'£'
+:こんにちは世界
+:Ólá
+:olá
+:Olá
 
---------------------------------------------------------------------------------
+---
 
-(program
-  (tuple
-    (atom
-      (atom_literal))
-    (atom
-      (atom_literal))
-    (atom
-      (atom_start)
-      (atom_content)
-      (atom_end))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (atom
-      (atom_literal))
-    (atom
-      (atom_literal))
-    (atom
-      (atom_literal))
-    (atom
-      (atom_literal))))
+(source
+  (atom)
+  (quoted_atom
+    (quoted_content))
+  (quoted_atom
+    (quoted_content))
+  (atom)
+  (atom)
+  (atom)
+  (atom))
 
-================================================================================
-char
-================================================================================
-
-[?ł, ?μ, ?£]
-
---------------------------------------------------------------------------------
-
-(program
-  (list
-    (char)
-    (char)
-    (char)))
-
-================================================================================
+=====================================
 string
-================================================================================
+=====================================
 
-["über", 'hełło', 'olá', "olá"]
+"time_μs"
+"£"
+"こんにちは世界"
+"Ólá"
+"olá"
+"Olá"
 
---------------------------------------------------------------------------------
+---
 
-(program
-  (list
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))))
+(source
+  (string
+    (quoted_content))
+  (string
+    (quoted_content))
+  (string
+    (quoted_content))
+  (string
+    (quoted_content))
+  (string
+    (quoted_content))
+  (string
+    (quoted_content)))
+
+=====================================
+charlist
+=====================================
+
+'time_μs'
+'£'
+'こんにちは世界'
+'Ólá'
+'olá'
+'Olá'
+---
+
+(source
+  (charlist
+    (quoted_content))
+  (charlist
+    (quoted_content))
+  (charlist
+    (quoted_content))
+  (charlist
+    (quoted_content))
+  (charlist
+    (quoted_content))
+  (charlist
+    (quoted_content)))
+
+=====================================
+char
+=====================================
+
+?ł
+?μ
+?£
+?こ
+
+---
+
+(source
+  (char)
+  (char)
+  (char)
+  (char))
+
+=====================================
+variable
+=====================================
+
+time_μs
+こんにちは世界
+olá
+
+---
+
+(source
+  (identifier)
+  (identifier)
+  (identifier))

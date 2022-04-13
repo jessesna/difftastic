@@ -1,47 +1,61 @@
 //! Apply colours and styling to strings.
 
 use crate::{
-    lines::{codepoint_len, substring_by_codepoint, LineNumber},
+    constants::Side,
+    lines::{byte_len, codepoint_len, LineNumber},
     positions::SingleLineSpan,
     syntax::{AtomKind, MatchKind, MatchedPos, TokenKind},
 };
-use colored::*;
+use owo_colors::{OwoColorize, Style};
 use std::{
     cmp::{max, min},
     collections::HashMap,
 };
 
 #[derive(Clone, Copy, Debug)]
-pub struct Style {
-    foreground: Color,
-    background: Option<Color>,
-    bold: bool,
-    dimmed: bool,
+pub enum BackgroundColor {
+    Dark,
+    Light,
 }
 
-impl Style {
-    fn apply(&self, s: &str) -> String {
-        let mut res = s.color(self.foreground);
-        if self.bold {
-            res = res.bold();
-        }
-        if self.dimmed {
-            res = res.dimmed();
-        }
-        if let Some(background) = self.background {
-            res = res.on_color(background);
-        };
-        res.to_string()
+impl BackgroundColor {
+    pub fn is_dark(&self) -> bool {
+        matches!(self, BackgroundColor::Dark)
     }
+}
+
+/// Slice `s` from `start` inclusive to `end` exclusive by codepoint. This is safer than
+/// slicing by bytes, which panics if the byte isn't on a codepoint
+/// boundary.
+fn substring_by_codepoint(s: &str, start: usize, end: usize) -> &str {
+    if start == end {
+        return &s[0..0];
+    }
+
+    assert!(end > start);
+
+    let mut char_idx_iter = s.char_indices();
+    let byte_start = char_idx_iter
+        .nth(start)
+        .expect("Expected a codepoint index inside `s`.")
+        .0;
+    match char_idx_iter.nth(end - start - 1) {
+        Some(byte_end) => &s[byte_start..byte_end.0],
+        None => &s[byte_start..],
+    }
+}
+
+fn substring_by_byte(s: &str, start: usize, end: usize) -> &str {
+    &s[start..end]
 }
 
 /// Split a string into equal length parts, padding the last part if
 /// necessary.
 ///
 /// ```
-/// split_string("fooba", 3) // vec!["foo", "ba "]
+/// split_string_by_codepoint("fooba", 3) // vec!["foo", "ba "]
 /// ```
-fn split_string(s: &str, max_len: usize) -> Vec<String> {
+fn split_string_by_codepoint(s: &str, max_len: usize, pad_last: bool) -> Vec<String> {
     let mut res = vec![];
     let mut s = s;
 
@@ -50,108 +64,131 @@ fn split_string(s: &str, max_len: usize) -> Vec<String> {
         s = substring_by_codepoint(s, max_len, codepoint_len(s));
     }
 
-    if res.is_empty() || s != "" {
-        res.push(format!("{:width$}", s, width = max_len));
+    if res.is_empty() || !s.is_empty() {
+        if pad_last {
+            res.push(format!("{:width$}", s, width = max_len));
+        } else {
+            res.push(s.to_string());
+        }
     }
 
     res
 }
 
+fn highlight_missing_style_bug(s: &str) -> String {
+    s.on_purple().to_string()
+}
+
+/// Split `line` (from the source code) into multiple lines of
+/// `max_len` (i.e. word wrapping), and apply `styles` to each part
+/// according to its original position in `line`.
 pub fn split_and_apply(
     line: &str,
     max_len: usize,
+    use_color: bool,
     styles: &[(SingleLineSpan, Style)],
+    side: Side,
 ) -> Vec<String> {
-    if styles.is_empty() {
-        // Missing styles is a bug, so higlight in purple to make this obvious.
-        return split_string(line, max_len)
+    if styles.is_empty() && !line.trim().is_empty() {
+        // Missing styles is a bug, so highlight in purple to make this obvious.
+        return split_string_by_codepoint(line, max_len, matches!(side, Side::Left))
             .into_iter()
-            .map(|part| part.purple().to_string())
+            .map(|part| {
+                if use_color {
+                    highlight_missing_style_bug(&part)
+                } else {
+                    part
+                }
+            })
             .collect();
     }
 
     let mut styled_parts = vec![];
-    let mut prev_length = 0;
+    let mut part_start = 0;
 
-    for part in split_string(line, max_len) {
+    for part in split_string_by_codepoint(line, max_len, matches!(side, Side::Left)) {
         let mut res = String::with_capacity(part.len());
-        let mut i = 0;
+        let mut prev_style_end = 0;
         for (span, style) in styles {
             // The remaining spans are beyond the end of this part.
-            if span.start_col >= prev_length + codepoint_len(&part) {
+            if span.start_col >= part_start + byte_len(&part) {
                 break;
             }
 
-            if i >= prev_length {
-                // Dim text before the next span.
-                if i < span.start_col {
-                    res.push_str(
-                        &substring_by_codepoint(
-                            &part,
-                            i - prev_length,
-                            span.start_col - prev_length,
-                        )
-                        .dimmed(),
-                    );
-                }
+            // If there's an unstyled gap before the next span.
+            if span.start_col > part_start && prev_style_end < span.start_col {
+                // Then append that text without styling.
+                let unstyled_start = max(prev_style_end, part_start);
+                res.push_str(substring_by_byte(
+                    &part,
+                    unstyled_start - part_start,
+                    span.start_col - part_start,
+                ));
             }
 
             // Apply style to the substring in this span.
-            if span.end_col > prev_length {
-                let span_s = substring_by_codepoint(
+            if span.end_col > part_start {
+                let span_s = substring_by_byte(
                     &part,
-                    max(0, span.start_col as isize - prev_length as isize) as usize,
-                    min(codepoint_len(&part), span.end_col - prev_length),
+                    max(0, span.start_col as isize - part_start as isize) as usize,
+                    min(byte_len(&part), span.end_col - part_start),
                 );
-                res.push_str(&style.apply(span_s));
+                res.push_str(&span_s.style(*style).to_string());
             }
-            i = span.end_col;
+            prev_style_end = span.end_col;
         }
-        // Dim text after the last span.
-        if i < prev_length + codepoint_len(&part) {
-            let span_s = substring_by_codepoint(&part, i - prev_length, codepoint_len(&part));
-            res.push_str(&span_s.dimmed());
+
+        // Ensure that prev_style_end is at least at the start of this
+        // part.
+        if prev_style_end < part_start {
+            prev_style_end = part_start;
+        }
+
+        // Unstyled text after the last span.
+        if prev_style_end < part_start + codepoint_len(&part) {
+            let span_s = substring_by_byte(&part, prev_style_end - part_start, byte_len(&part));
+            res.push_str(span_s);
         }
 
         styled_parts.push(res);
-        prev_length += codepoint_len(&part)
+        part_start += byte_len(&part);
     }
 
     styled_parts
 }
 
-/// Return a copy of `line` with styles applied to all the spans specified.
-/// Dim any parts of the line that have no spans.
+/// Return a copy of `line` with styles applied to all the spans
+/// specified.
 fn apply_line(line: &str, styles: &[(SingleLineSpan, Style)]) -> String {
-    if styles.is_empty() {
-        return line.purple().to_string();
+    if styles.is_empty() && !line.is_empty() {
+        return highlight_missing_style_bug(line);
     }
 
+    let line_bytes = byte_len(line);
     let mut res = String::with_capacity(line.len());
     let mut i = 0;
     for (span, style) in styles {
         // The remaining spans are beyond the end of this line. This
         // occurs when we truncate the line to fit on the display.
-        if span.start_col >= codepoint_len(line) {
+        if span.start_col >= line_bytes {
             break;
         }
 
-        // Dim text before the next span.
+        // Unstyled text before the next span.
         if i < span.start_col {
-            res.push_str(&substring_by_codepoint(line, i, span.start_col).dimmed());
+            res.push_str(substring_by_byte(line, i, span.start_col));
         }
 
         // Apply style to the substring in this span.
-        let span_s =
-            substring_by_codepoint(line, span.start_col, min(codepoint_len(line), span.end_col));
-        res.push_str(&style.apply(span_s));
+        let span_s = substring_by_byte(line, span.start_col, min(line_bytes, span.end_col));
+        res.push_str(&span_s.style(*style).to_string());
         i = span.end_col;
     }
 
-    // Dim text after the last span.
-    if i < codepoint_len(line) {
-        let span_s = substring_by_codepoint(line, i, codepoint_len(line));
-        res.push_str(&span_s.dimmed());
+    // Unstyled text after the last span.
+    if i < line_bytes {
+        let span_s = substring_by_byte(line, i, line_bytes);
+        res.push_str(span_s);
     }
     res
 }
@@ -171,8 +208,7 @@ fn group_by_line(
     ranges_by_line
 }
 
-/// Apply the `Style`s to the spans specified. Dim any text that
-/// doesn't have any styles applied.
+/// Apply the `Style`s to the spans specified.
 ///
 /// Tolerant against lines in `s` being shorter than the spans.
 fn apply(s: &str, styles: &[(SingleLineSpan, Style)]) -> String {
@@ -187,101 +223,124 @@ fn apply(s: &str, styles: &[(SingleLineSpan, Style)]) -> String {
     res
 }
 
-pub fn color_positions(is_lhs: bool, positions: &[MatchedPos]) -> Vec<(SingleLineSpan, Style)> {
+pub fn novel_style(style: Style, is_lhs: bool, background: BackgroundColor) -> Style {
+    if background.is_dark() {
+        if is_lhs {
+            style.bright_red()
+        } else {
+            style.bright_green()
+        }
+    } else {
+        if is_lhs {
+            style.red()
+        } else {
+            style.green()
+        }
+    }
+}
+
+pub fn color_positions(
+    is_lhs: bool,
+    background: BackgroundColor,
+    positions: &[MatchedPos],
+) -> Vec<(SingleLineSpan, Style)> {
     let mut styles = vec![];
     for pos in positions {
-        let line_pos = pos.pos;
-        let style = match pos.kind {
-            MatchKind::Unchanged { highlight, .. } => Style {
-                foreground: Color::White,
-                background: None,
-                bold: highlight == TokenKind::Atom(AtomKind::Keyword),
-                dimmed: highlight == TokenKind::Atom(AtomKind::Comment),
-            },
-            MatchKind::Novel { highlight, .. } => Style {
-                foreground: if is_lhs {
-                    Color::BrightRed
-                } else {
-                    Color::BrightGreen
-                },
-                background: None,
-                bold: highlight == TokenKind::Atom(AtomKind::Keyword),
-                dimmed: false,
-            },
-            MatchKind::ChangedCommentPart { .. } => Style {
-                foreground: if is_lhs {
-                    Color::BrightRed
-                } else {
-                    Color::BrightGreen
-                },
-                background: None,
-                bold: false,
-                dimmed: false,
-            },
-            MatchKind::UnchangedCommentPart { .. } => Style {
-                foreground: if is_lhs { Color::Red } else { Color::Green },
-                background: None,
-                bold: false,
-                dimmed: false,
-            },
+        let mut style = Style::new();
+        match pos.kind {
+            MatchKind::UnchangedToken { highlight, .. } => {
+                if let TokenKind::Atom(atom_kind) = highlight {
+                    match atom_kind {
+                        AtomKind::String => {
+                            style = if background.is_dark() {
+                                style.bright_magenta()
+                            } else {
+                                style.magenta()
+                            };
+                        }
+                        AtomKind::Comment => {
+                            style = style.italic();
+                            style = if background.is_dark() {
+                                style.bright_blue()
+                            } else {
+                                style.blue()
+                            };
+                        }
+                        AtomKind::Keyword | AtomKind::Type => {
+                            style = style.bold();
+                        }
+                        AtomKind::Normal => {}
+                    }
+                }
+            }
+            MatchKind::Novel { highlight, .. } => {
+                style = novel_style(style, is_lhs, background);
+                if matches!(
+                    highlight,
+                    TokenKind::Delimiter
+                        | TokenKind::Atom(AtomKind::Keyword)
+                        | TokenKind::Atom(AtomKind::Type)
+                ) {
+                    style = style.bold();
+                }
+                if matches!(highlight, TokenKind::Atom(AtomKind::Comment)) {
+                    style = style.italic();
+                }
+            }
+            MatchKind::NovelWord { highlight } => {
+                style = novel_style(style, is_lhs, background).bold();
+                if matches!(highlight, TokenKind::Atom(AtomKind::Comment)) {
+                    style = style.italic();
+                }
+            }
+            MatchKind::NovelLinePart { highlight, .. } => {
+                style = novel_style(style, is_lhs, background);
+                if matches!(highlight, TokenKind::Atom(AtomKind::Comment)) {
+                    style = style.italic();
+                }
+            }
         };
-        styles.push((line_pos, style));
+        styles.push((pos.pos, style));
     }
     styles
 }
 
-pub fn apply_colors(s: &str, is_lhs: bool, positions: &[MatchedPos]) -> String {
-    let mut styles = vec![];
-    for pos in positions {
-        let line_pos = pos.pos;
-        let style = match pos.kind {
-            MatchKind::Unchanged { highlight, .. } => Style {
-                foreground: Color::White,
-                background: None,
-                bold: highlight == TokenKind::Atom(AtomKind::Keyword),
-                dimmed: highlight == TokenKind::Atom(AtomKind::Comment),
-            },
-            MatchKind::Novel { highlight, .. } => Style {
-                foreground: if is_lhs {
-                    Color::BrightRed
-                } else {
-                    Color::BrightGreen
-                },
-                background: None,
-                bold: highlight == TokenKind::Atom(AtomKind::Keyword),
-                dimmed: false,
-            },
-            MatchKind::ChangedCommentPart { .. } => Style {
-                foreground: if is_lhs {
-                    Color::BrightRed
-                } else {
-                    Color::BrightGreen
-                },
-                background: None,
-                bold: false,
-                dimmed: false,
-            },
-            MatchKind::UnchangedCommentPart { .. } => Style {
-                foreground: if is_lhs { Color::Red } else { Color::Green },
-                background: None,
-                bold: false,
-                dimmed: false,
-            },
-        };
-        styles.push((line_pos, style));
-    }
-
+pub fn apply_colors(
+    s: &str,
+    is_lhs: bool,
+    background: BackgroundColor,
+    positions: &[MatchedPos],
+) -> String {
+    let styles = color_positions(is_lhs, background, positions);
     apply(s, &styles)
 }
 
-pub fn header(file_name: &str, hunk_num: usize, hunk_total: usize, language_name: &str) -> String {
-    format!(
-        "{} --- {}/{} --- {}",
-        file_name.yellow().bold(),
-        hunk_num,
-        hunk_total,
-        language_name
-    )
+pub fn header(
+    file_name: &str,
+    hunk_num: usize,
+    hunk_total: usize,
+    language_name: &str,
+    use_color: bool,
+    background: BackgroundColor,
+) -> String {
+    let file_name_pretty = if use_color {
+        if background.is_dark() {
+            file_name.bright_yellow().to_string()
+        } else {
+            file_name.yellow().to_string()
+        }
+        .bold()
+        .to_string()
+    } else {
+        file_name.to_string()
+    };
+    let divider = if hunk_total == 1 {
+        "".to_owned()
+    } else {
+        format!("{}/{} --- ", hunk_num, hunk_total)
+    };
+
+    format!("{} --- {}{}", file_name_pretty, divider, language_name)
 }
 
 #[cfg(test)]
@@ -290,12 +349,128 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     #[test]
+    fn test_substring_by_codepoint() {
+        assert_eq!(substring_by_codepoint("abcd", 0, 2), "ab");
+    }
+
+    #[test]
+    fn test_substring_by_codepoint_empty() {
+        assert_eq!(substring_by_codepoint("abcd", 0, 0), "");
+    }
+
+    #[test]
     fn split_string_simple() {
-        assert_eq!(split_string("fooba", 3), vec!["foo", "ba "]);
+        assert_eq!(
+            split_string_by_codepoint("fooba", 3, true),
+            vec!["foo", "ba "]
+        );
+    }
+
+    #[test]
+    fn split_string_simple_no_pad() {
+        assert_eq!(
+            split_string_by_codepoint("fooba", 3, false),
+            vec!["foo", "ba"]
+        );
     }
 
     #[test]
     fn split_string_unicode() {
-        assert_eq!(split_string("ab📦def", 3), vec!["ab📦", "def"]);
+        assert_eq!(
+            split_string_by_codepoint("ab📦def", 3, true),
+            vec!["ab📦", "def"]
+        );
+    }
+
+    #[test]
+    fn test_split_and_apply_missing() {
+        let res = split_and_apply("foo", 3, true, &[], Side::Left);
+        assert_eq!(res, vec![highlight_missing_style_bug("foo")])
+    }
+
+    #[test]
+    fn test_split_and_apply() {
+        let res = split_and_apply(
+            "foo",
+            3,
+            true,
+            &[(
+                SingleLineSpan {
+                    line: 0.into(),
+                    start_col: 0,
+                    end_col: 3,
+                },
+                Style::new(),
+            )],
+            Side::Left,
+        );
+        assert_eq!(res, vec!["foo"])
+    }
+
+    #[test]
+    fn test_split_and_apply_trailing_text() {
+        let res = split_and_apply(
+            "foobar",
+            6,
+            true,
+            &[(
+                SingleLineSpan {
+                    line: 0.into(),
+                    start_col: 0,
+                    end_col: 3,
+                },
+                Style::new(),
+            )],
+            Side::Left,
+        );
+        assert_eq!(res, vec!["foobar"])
+    }
+
+    #[test]
+    fn test_split_and_apply_gap_between_styles_on_wrap_boundary() {
+        let res = split_and_apply(
+            "foobar",
+            3,
+            true,
+            &[
+                (
+                    SingleLineSpan {
+                        line: 0.into(),
+                        start_col: 0,
+                        end_col: 2,
+                    },
+                    Style::new(),
+                ),
+                (
+                    SingleLineSpan {
+                        line: 0.into(),
+                        start_col: 4,
+                        end_col: 6,
+                    },
+                    Style::new(),
+                ),
+            ],
+            Side::Left,
+        );
+        assert_eq!(res, vec!["foo", "bar"])
+    }
+
+    #[test]
+    fn test_split_and_apply_trailing_text_newline() {
+        let res = split_and_apply(
+            "foobar      ",
+            6,
+            true,
+            &[(
+                SingleLineSpan {
+                    line: 0.into(),
+                    start_col: 0,
+                    end_col: 3,
+                },
+                Style::new(),
+            )],
+            Side::Left,
+        );
+        assert_eq!(res, vec!["foobar", "      "])
     }
 }

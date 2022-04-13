@@ -1,23 +1,97 @@
-================================================================================
-hanging comment
-================================================================================
+=====================================
+empty
+=====================================
 
-%{a: 1,
-  b: 2, # fix it
-  c: 3}
+#
 
---------------------------------------------------------------------------------
+---
 
-(program
-  (map
-    (keyword_list
-      (keyword
-        (keyword_literal))
-      (integer)
-      (keyword
-        (keyword_literal))
+(source
+  (comment))
+
+=====================================
+single line
+=====================================
+
+# single comment
+
+---
+
+(source
+  (comment))
+
+=====================================
+multiple start symbols
+=====================================
+
+### multiple "#"
+
+---
+
+(source
+  (comment))
+
+=====================================
+many consecutive lines
+=====================================
+
+# many
+# consecutive
+1
+# lines
+
+---
+
+(source
+  (comment)
+  (comment)
+  (integer)
+  (comment))
+
+=====================================
+in the same line as regular code
+=====================================
+
+1 # comment
+
+---
+
+(source
+  (integer)
+  (comment))
+
+=====================================
+matches inside a nested structure
+=====================================
+
+[ 1 ## inside a list
+, { 2 # and a tuple, too!
+  , 3 }
+]
+
+---
+
+(source
+  (list
+    (integer)
+    (comment)
+    (tuple
       (integer)
       (comment)
-      (keyword
-        (keyword_literal))
       (integer))))
+
+=====================================
+does not match inside a string
+=====================================
+
+"# string"
+"this is #{interpolation}"
+
+---
+
+(source
+  (string
+    (quoted_content))
+  (string
+    (quoted_content)
+    (interpolation (identifier))))

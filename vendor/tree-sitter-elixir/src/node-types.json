@@ -2,654 +2,17 @@
   {
     "type": "access_call",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "after_block",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "stab_expression",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "anonymous_function",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "stab_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "arguments",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "atom",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "atom_content",
-          "named": true
-        },
-        {
-          "type": "atom_end",
-          "named": true
-        },
-        {
-          "type": "atom_literal",
-          "named": true
-        },
-        {
-          "type": "atom_start",
-          "named": true
-        },
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "interpolation",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "bare_arguments",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "binary",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "binary_op",
-    "named": true,
     "fields": {
-      "left": {
+      "key": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "access_call",
+            "named": true
+          },
+          {
+            "type": "alias",
             "named": true
           },
           {
@@ -661,15 +24,19 @@
             "named": true
           },
           {
-            "type": "binary",
+            "type": "binary_operator",
             "named": true
           },
           {
-            "type": "binary_op",
+            "type": "bitstring",
             "named": true
           },
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
             "named": true
           },
           {
@@ -681,19 +48,15 @@
             "named": true
           },
           {
-            "type": "dot_call",
+            "type": "charlist",
             "named": true
           },
           {
-            "type": "false",
+            "type": "dot",
             "named": true
           },
           {
             "type": "float",
-            "named": true
-          },
-          {
-            "type": "heredoc",
             "named": true
           },
           {
@@ -713,11 +76,11 @@
             "named": true
           },
           {
-            "type": "module",
+            "type": "nil",
             "named": true
           },
           {
-            "type": "nil",
+            "type": "quoted_atom",
             "named": true
           },
           {
@@ -725,19 +88,7 @@
             "named": true
           },
           {
-            "type": "special_identifier",
-            "named": true
-          },
-          {
             "type": "string",
-            "named": true
-          },
-          {
-            "type": "struct",
-            "named": true
-          },
-          {
-            "type": "true",
             "named": true
           },
           {
@@ -745,11 +96,446 @@
             "named": true
           },
           {
-            "type": "unary_op",
+            "type": "unary_operator",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "access_call",
             "named": true
           },
           {
-            "type": "unused_identifier",
+            "type": "alias",
+            "named": true
+          },
+          {
+            "type": "anonymous_function",
+            "named": true
+          },
+          {
+            "type": "atom",
+            "named": true
+          },
+          {
+            "type": "binary_operator",
+            "named": true
+          },
+          {
+            "type": "bitstring",
+            "named": true
+          },
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "charlist",
+            "named": true
+          },
+          {
+            "type": "dot",
+            "named": true
+          },
+          {
+            "type": "float",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "map",
+            "named": true
+          },
+          {
+            "type": "nil",
+            "named": true
+          },
+          {
+            "type": "quoted_atom",
+            "named": true
+          },
+          {
+            "type": "sigil",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple",
+            "named": true
+          },
+          {
+            "type": "unary_operator",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "after_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "stab_clause",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "anonymous_function",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "stab_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "arguments",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "keywords",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "binary_operator",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "access_call",
+            "named": true
+          },
+          {
+            "type": "alias",
+            "named": true
+          },
+          {
+            "type": "anonymous_function",
+            "named": true
+          },
+          {
+            "type": "arguments",
+            "named": true
+          },
+          {
+            "type": "atom",
+            "named": true
+          },
+          {
+            "type": "binary_operator",
+            "named": true
+          },
+          {
+            "type": "bitstring",
+            "named": true
+          },
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "charlist",
+            "named": true
+          },
+          {
+            "type": "dot",
+            "named": true
+          },
+          {
+            "type": "float",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "map",
+            "named": true
+          },
+          {
+            "type": "nil",
+            "named": true
+          },
+          {
+            "type": "operator_identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_atom",
+            "named": true
+          },
+          {
+            "type": "sigil",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple",
+            "named": true
+          },
+          {
+            "type": "unary_operator",
             "named": true
           }
         ]
@@ -776,6 +562,10 @@
           },
           {
             "type": "*",
+            "named": false
+          },
+          {
+            "type": "**",
             "named": false
           },
           {
@@ -942,10 +732,14 @@
       },
       "right": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "access_call",
+            "named": true
+          },
+          {
+            "type": "alias",
             "named": true
           },
           {
@@ -957,15 +751,19 @@
             "named": true
           },
           {
-            "type": "binary",
+            "type": "binary_operator",
             "named": true
           },
           {
-            "type": "binary_op",
+            "type": "bitstring",
             "named": true
           },
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
             "named": true
           },
           {
@@ -977,19 +775,15 @@
             "named": true
           },
           {
-            "type": "dot_call",
+            "type": "charlist",
             "named": true
           },
           {
-            "type": "false",
+            "type": "dot",
             "named": true
           },
           {
             "type": "float",
-            "named": true
-          },
-          {
-            "type": "heredoc",
             "named": true
           },
           {
@@ -1001,7 +795,7 @@
             "named": true
           },
           {
-            "type": "keyword_list",
+            "type": "keywords",
             "named": true
           },
           {
@@ -1013,11 +807,11 @@
             "named": true
           },
           {
-            "type": "module",
+            "type": "nil",
             "named": true
           },
           {
-            "type": "nil",
+            "type": "quoted_atom",
             "named": true
           },
           {
@@ -1025,19 +819,7 @@
             "named": true
           },
           {
-            "type": "special_identifier",
-            "named": true
-          },
-          {
             "type": "string",
-            "named": true
-          },
-          {
-            "type": "struct",
-            "named": true
-          },
-          {
-            "type": "true",
             "named": true
           },
           {
@@ -1045,22 +827,115 @@
             "named": true
           },
           {
-            "type": "unary_op",
-            "named": true
-          },
-          {
-            "type": "unused_identifier",
+            "type": "unary_operator",
             "named": true
           }
         ]
       }
-    },
+    }
+  },
+  {
+    "type": "bitstring",
+    "named": true,
+    "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "integer",
+          "named": true
+        },
+        {
+          "type": "keywords",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -1079,6 +954,10 @@
           "named": true
         },
         {
+          "type": "alias",
+          "named": true
+        },
+        {
           "type": "anonymous_function",
           "named": true
         },
@@ -1087,15 +966,19 @@
           "named": true
         },
         {
-          "type": "binary",
+          "type": "binary_operator",
           "named": true
         },
         {
-          "type": "binary_op",
+          "type": "bitstring",
           "named": true
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -1107,19 +990,15 @@
           "named": true
         },
         {
-          "type": "dot_call",
+          "type": "charlist",
           "named": true
         },
         {
-          "type": "false",
+          "type": "dot",
           "named": true
         },
         {
           "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
           "named": true
         },
         {
@@ -1139,11 +1018,11 @@
           "named": true
         },
         {
-          "type": "module",
+          "type": "nil",
           "named": true
         },
         {
-          "type": "nil",
+          "type": "quoted_atom",
           "named": true
         },
         {
@@ -1151,11 +1030,7 @@
           "named": true
         },
         {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "stab_expression",
+          "type": "stab_clause",
           "named": true
         },
         {
@@ -1163,51 +1038,20 @@
           "named": true
         },
         {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
           "type": "tuple",
           "named": true
         },
         {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
+          "type": "unary_operator",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "call",
+    "type": "body",
     "named": true,
-    "fields": {
-      "function": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "call",
-            "named": true
-          },
-          {
-            "type": "dot_call",
-            "named": true
-          },
-          {
-            "type": "function_identifier",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
       "required": true,
@@ -1217,11 +1061,11 @@
           "named": true
         },
         {
-          "type": "anonymous_function",
+          "type": "alias",
           "named": true
         },
         {
-          "type": "arguments",
+          "type": "anonymous_function",
           "named": true
         },
         {
@@ -1229,15 +1073,19 @@
           "named": true
         },
         {
-          "type": "binary",
+          "type": "binary_operator",
           "named": true
         },
         {
-          "type": "binary_op",
+          "type": "bitstring",
           "named": true
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -1249,23 +1097,15 @@
           "named": true
         },
         {
-          "type": "do_block",
+          "type": "charlist",
           "named": true
         },
         {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
+          "type": "dot",
           "named": true
         },
         {
           "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
           "named": true
         },
         {
@@ -1277,10 +1117,6 @@
           "named": true
         },
         {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
           "type": "list",
           "named": true
         },
@@ -1289,11 +1125,11 @@
           "named": true
         },
         {
-          "type": "module",
+          "type": "nil",
           "named": true
         },
         {
-          "type": "nil",
+          "type": "quoted_atom",
           "named": true
         },
         {
@@ -1301,19 +1137,7 @@
           "named": true
         },
         {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
           "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
           "named": true
         },
         {
@@ -1321,11 +1145,50 @@
           "named": true
         },
         {
-          "type": "unary_op",
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "boolean",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "call",
+    "named": true,
+    "fields": {
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "dot",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "arguments",
           "named": true
         },
         {
-          "type": "unused_identifier",
+          "type": "do_block",
           "named": true
         }
       ]
@@ -1344,6 +1207,10 @@
           "named": true
         },
         {
+          "type": "alias",
+          "named": true
+        },
+        {
           "type": "anonymous_function",
           "named": true
         },
@@ -1352,15 +1219,19 @@
           "named": true
         },
         {
-          "type": "binary",
+          "type": "binary_operator",
           "named": true
         },
         {
-          "type": "binary_op",
+          "type": "bitstring",
           "named": true
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -1372,19 +1243,15 @@
           "named": true
         },
         {
-          "type": "dot_call",
+          "type": "charlist",
           "named": true
         },
         {
-          "type": "false",
+          "type": "dot",
           "named": true
         },
         {
           "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
           "named": true
         },
         {
@@ -1404,11 +1271,11 @@
           "named": true
         },
         {
-          "type": "module",
+          "type": "nil",
           "named": true
         },
         {
-          "type": "nil",
+          "type": "quoted_atom",
           "named": true
         },
         {
@@ -1416,11 +1283,7 @@
           "named": true
         },
         {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "stab_expression",
+          "type": "stab_clause",
           "named": true
         },
         {
@@ -1428,23 +1291,63 @@
           "named": true
         },
         {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
           "type": "tuple",
           "named": true
         },
         {
-          "type": "unary_op",
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "charlist",
+    "named": true,
+    "fields": {
+      "quoted_end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "'",
+            "named": false
+          },
+          {
+            "type": "'''",
+            "named": false
+          }
+        ]
+      },
+      "quoted_start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "'",
+            "named": false
+          },
+          {
+            "type": "'''",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
-          "type": "unused_identifier",
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "quoted_content",
           "named": true
         }
       ]
@@ -1467,6 +1370,10 @@
           "named": true
         },
         {
+          "type": "alias",
+          "named": true
+        },
+        {
           "type": "anonymous_function",
           "named": true
         },
@@ -1475,15 +1382,19 @@
           "named": true
         },
         {
-          "type": "binary",
+          "type": "binary_operator",
           "named": true
         },
         {
-          "type": "binary_op",
+          "type": "bitstring",
           "named": true
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -1499,7 +1410,11 @@
           "named": true
         },
         {
-          "type": "dot_call",
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
           "named": true
         },
         {
@@ -1507,15 +1422,7 @@
           "named": true
         },
         {
-          "type": "false",
-          "named": true
-        },
-        {
           "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
           "named": true
         },
         {
@@ -1535,11 +1442,11 @@
           "named": true
         },
         {
-          "type": "module",
+          "type": "nil",
           "named": true
         },
         {
-          "type": "nil",
+          "type": "quoted_atom",
           "named": true
         },
         {
@@ -1551,11 +1458,7 @@
           "named": true
         },
         {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "stab_expression",
+          "type": "stab_clause",
           "named": true
         },
         {
@@ -1563,1220 +1466,30 @@
           "named": true
         },
         {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
           "type": "tuple",
           "named": true
         },
         {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
+          "type": "unary_operator",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "dot_call",
-    "named": true,
-    "fields": {
-      "function": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "function_identifier",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      },
-      "remote": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "access_call",
-            "named": true
-          },
-          {
-            "type": "anonymous_function",
-            "named": true
-          },
-          {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "call",
-            "named": true
-          },
-          {
-            "type": "char",
-            "named": true
-          },
-          {
-            "type": "dot_call",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "map",
-            "named": true
-          },
-          {
-            "type": "module",
-            "named": true
-          },
-          {
-            "type": "paren_expr",
-            "named": true
-          },
-          {
-            "type": "special_identifier",
-            "named": true
-          },
-          {
-            "type": "struct",
-            "named": true
-          },
-          {
-            "type": "unary_op",
-            "named": true
-          },
-          {
-            "type": "unused_identifier",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "arguments",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "else_block",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "stab_expression",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "heredoc",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "heredoc_content",
-          "named": true
-        },
-        {
-          "type": "heredoc_end",
-          "named": true
-        },
-        {
-          "type": "heredoc_start",
-          "named": true
-        },
-        {
-          "type": "interpolation",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "interpolation",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "keyword",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "keyword_literal",
-          "named": true
-        },
-        {
-          "type": "keyword_string",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "keyword_list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "keyword_string",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "interpolation",
-          "named": true
-        },
-        {
-          "type": "string_content",
-          "named": true
-        },
-        {
-          "type": "string_end",
-          "named": true
-        },
-        {
-          "type": "string_start",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "map",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "paren_expr",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "program",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "rescue_block",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "stab_expression",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "sigil",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "interpolation",
-          "named": true
-        },
-        {
-          "type": "sigil_content",
-          "named": true
-        },
-        {
-          "type": "sigil_end",
-          "named": true
-        },
-        {
-          "type": "sigil_start",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "stab_expression",
+    "type": "dot",
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ";",
-            "named": false
-          },
-          {
-            "type": "bare_arguments",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": ";",
-            "named": false
+            "type": "access_call",
+            "named": true
           },
           {
-            "type": "access_call",
+            "type": "alias",
             "named": true
           },
           {
@@ -2788,11 +1501,11 @@
             "named": true
           },
           {
-            "type": "binary",
+            "type": "binary_operator",
             "named": true
           },
           {
-            "type": "binary_op",
+            "type": "bitstring",
             "named": true
           },
           {
@@ -2800,6 +1513,10 @@
             "named": true
           },
           {
+            "type": "boolean",
+            "named": true
+          },
+          {
             "type": "call",
             "named": true
           },
@@ -2808,19 +1525,15 @@
             "named": true
           },
           {
-            "type": "dot_call",
+            "type": "charlist",
             "named": true
           },
           {
-            "type": "false",
+            "type": "dot",
             "named": true
           },
           {
             "type": "float",
-            "named": true
-          },
-          {
-            "type": "heredoc",
             "named": true
           },
           {
@@ -2840,11 +1553,11 @@
             "named": true
           },
           {
-            "type": "module",
+            "type": "nil",
             "named": true
           },
           {
-            "type": "nil",
+            "type": "quoted_atom",
             "named": true
           },
           {
@@ -2852,19 +1565,7 @@
             "named": true
           },
           {
-            "type": "special_identifier",
-            "named": true
-          },
-          {
             "type": "string",
-            "named": true
-          },
-          {
-            "type": "struct",
-            "named": true
-          },
-          {
-            "type": "true",
             "named": true
           },
           {
@@ -2872,11 +1573,47 @@
             "named": true
           },
           {
-            "type": "unary_op",
+            "type": "unary_operator",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": ".",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "alias",
             "named": true
           },
           {
-            "type": "unused_identifier",
+            "type": "charlist",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "operator_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple",
             "named": true
           }
         ]
@@ -2884,9 +1621,904 @@
     }
   },
   {
-    "type": "string",
+    "type": "else_block",
     "named": true,
     "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "stab_clause",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "interpolation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "keywords",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "pair",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "keywords",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "map",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "map_content",
+          "named": true
+        },
+        {
+          "type": "struct",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "map_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "keywords",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "nil",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "operator_identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "pair",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "keyword",
+            "named": true
+          },
+          {
+            "type": "quoted_keyword",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "access_call",
+            "named": true
+          },
+          {
+            "type": "alias",
+            "named": true
+          },
+          {
+            "type": "anonymous_function",
+            "named": true
+          },
+          {
+            "type": "atom",
+            "named": true
+          },
+          {
+            "type": "binary_operator",
+            "named": true
+          },
+          {
+            "type": "bitstring",
+            "named": true
+          },
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "charlist",
+            "named": true
+          },
+          {
+            "type": "dot",
+            "named": true
+          },
+          {
+            "type": "float",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "map",
+            "named": true
+          },
+          {
+            "type": "nil",
+            "named": true
+          },
+          {
+            "type": "quoted_atom",
+            "named": true
+          },
+          {
+            "type": "sigil",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple",
+            "named": true
+          },
+          {
+            "type": "unary_operator",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "quoted_atom",
+    "named": true,
+    "fields": {
+      "quoted_end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "'",
+            "named": false
+          }
+        ]
+      },
+      "quoted_start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "'",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "quoted_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "quoted_keyword",
+    "named": true,
+    "fields": {
+      "quoted_end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "'",
+            "named": false
+          }
+        ]
+      },
+      "quoted_start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "'",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "quoted_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "rescue_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "bitstring",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "charlist",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "nil",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "sigil",
+          "named": true
+        },
+        {
+          "type": "stab_clause",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "sigil",
+    "named": true,
+    "fields": {
+      "quoted_end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "\"\"\"",
+            "named": false
+          },
+          {
+            "type": "'",
+            "named": false
+          },
+          {
+            "type": "'''",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "/",
+            "named": false
+          },
+          {
+            "type": ">",
+            "named": false
+          },
+          {
+            "type": "]",
+            "named": false
+          },
+          {
+            "type": "|",
+            "named": false
+          },
+          {
+            "type": "}",
+            "named": false
+          }
+        ]
+      },
+      "quoted_start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "\"\"\"",
+            "named": false
+          },
+          {
+            "type": "'",
+            "named": false
+          },
+          {
+            "type": "'''",
+            "named": false
+          },
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": "/",
+            "named": false
+          },
+          {
+            "type": "<",
+            "named": false
+          },
+          {
+            "type": "[",
+            "named": false
+          },
+          {
+            "type": "{",
+            "named": false
+          },
+          {
+            "type": "|",
+            "named": false
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -2900,30 +2532,34 @@
           "named": true
         },
         {
-          "type": "string_content",
+          "type": "quoted_content",
           "named": true
         },
         {
-          "type": "string_end",
+          "type": "sigil_modifiers",
           "named": true
         },
         {
-          "type": "string_start",
+          "type": "sigil_name",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "struct",
+    "type": "source",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "access_call",
+          "named": true
+        },
+        {
+          "type": "alias",
           "named": true
         },
         {
@@ -2935,15 +2571,19 @@
           "named": true
         },
         {
-          "type": "binary",
+          "type": "binary_operator",
           "named": true
         },
         {
-          "type": "binary_op",
+          "type": "bitstring",
           "named": true
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -2955,19 +2595,15 @@
           "named": true
         },
         {
-          "type": "dot_call",
+          "type": "charlist",
           "named": true
         },
         {
-          "type": "false",
+          "type": "dot",
           "named": true
         },
         {
           "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
           "named": true
         },
         {
@@ -2979,10 +2615,6 @@
           "named": true
         },
         {
-          "type": "keyword_list",
-          "named": true
-        },
-        {
           "type": "list",
           "named": true
         },
@@ -2991,11 +2623,11 @@
           "named": true
         },
         {
-          "type": "module",
+          "type": "nil",
           "named": true
         },
         {
-          "type": "nil",
+          "type": "quoted_atom",
           "named": true
         },
         {
@@ -3003,19 +2635,7 @@
           "named": true
         },
         {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
           "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
           "named": true
         },
         {
@@ -3023,11 +2643,138 @@
           "named": true
         },
         {
-          "type": "unary_op",
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "stab_clause",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "arguments",
+            "named": true
+          },
+          {
+            "type": "binary_operator",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "->",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "string",
+    "named": true,
+    "fields": {
+      "quoted_end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "\"\"\"",
+            "named": false
+          }
+        ]
+      },
+      "quoted_start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\"",
+            "named": false
+          },
+          {
+            "type": "\"\"\"",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
-          "type": "unused_identifier",
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "quoted_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "struct",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "alias",
+          "named": true
+        },
+        {
+          "type": "atom",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "dot",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_atom",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -3046,6 +2793,10 @@
           "named": true
         },
         {
+          "type": "alias",
+          "named": true
+        },
+        {
           "type": "anonymous_function",
           "named": true
         },
@@ -3054,15 +2805,19 @@
           "named": true
         },
         {
-          "type": "binary",
+          "type": "binary_operator",
           "named": true
         },
         {
-          "type": "binary_op",
+          "type": "bitstring",
           "named": true
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -3074,19 +2829,15 @@
           "named": true
         },
         {
-          "type": "dot_call",
+          "type": "charlist",
           "named": true
         },
         {
-          "type": "false",
+          "type": "dot",
           "named": true
         },
         {
           "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
           "named": true
         },
         {
@@ -3098,7 +2849,7 @@
           "named": true
         },
         {
-          "type": "keyword_list",
+          "type": "keywords",
           "named": true
         },
         {
@@ -3110,11 +2861,11 @@
           "named": true
         },
         {
-          "type": "module",
+          "type": "nil",
           "named": true
         },
         {
-          "type": "nil",
+          "type": "quoted_atom",
           "named": true
         },
         {
@@ -3122,19 +2873,7 @@
           "named": true
         },
         {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
           "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
           "named": true
         },
         {
@@ -3142,20 +2881,122 @@
           "named": true
         },
         {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
+          "type": "unary_operator",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "unary_op",
+    "type": "unary_operator",
     "named": true,
     "fields": {
+      "operand": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "access_call",
+            "named": true
+          },
+          {
+            "type": "alias",
+            "named": true
+          },
+          {
+            "type": "anonymous_function",
+            "named": true
+          },
+          {
+            "type": "atom",
+            "named": true
+          },
+          {
+            "type": "binary_operator",
+            "named": true
+          },
+          {
+            "type": "bitstring",
+            "named": true
+          },
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "charlist",
+            "named": true
+          },
+          {
+            "type": "dot",
+            "named": true
+          },
+          {
+            "type": "float",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "map",
+            "named": true
+          },
+          {
+            "type": "nil",
+            "named": true
+          },
+          {
+            "type": "quoted_atom",
+            "named": true
+          },
+          {
+            "type": "sigil",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple",
+            "named": true
+          },
+          {
+            "type": "unary_operator",
+            "named": true
+          }
+        ]
+      },
       "operator": {
         "multiple": false,
         "required": true,
@@ -3194,116 +3035,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "access_call",
-          "named": true
-        },
-        {
-          "type": "anonymous_function",
-          "named": true
-        },
-        {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "binary",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "dot_call",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "heredoc",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "module",
-          "named": true
-        },
-        {
-          "type": "nil",
-          "named": true
-        },
-        {
-          "type": "sigil",
-          "named": true
-        },
-        {
-          "type": "special_identifier",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "struct",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "unary_op",
-          "named": true
-        },
-        {
-          "type": "unused_identifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3319,15 +3050,19 @@
     "named": false
   },
   {
+    "type": "\"",
+    "named": false
+  },
+  {
+    "type": "\"\"\"",
+    "named": false
+  },
+  {
     "type": "#{",
     "named": false
   },
   {
     "type": "%",
-    "named": false
-  },
-  {
-    "type": "%{",
     "named": false
   },
   {
@@ -3343,6 +3078,14 @@
     "named": false
   },
   {
+    "type": "'",
+    "named": false
+  },
+  {
+    "type": "'''",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -3352,6 +3095,10 @@
   },
   {
     "type": "*",
+    "named": false
+  },
+  {
+    "type": "**",
     "named": false
   },
   {
@@ -3395,7 +3142,7 @@
     "named": false
   },
   {
-    "type": "..//",
+    "type": "...",
     "named": false
   },
   {
@@ -3515,6 +3262,10 @@
     "named": false
   },
   {
+    "type": "^^",
+    "named": false
+  },
+  {
     "type": "^^^",
     "named": false
   },
@@ -3523,23 +3274,15 @@
     "named": false
   },
   {
+    "type": "alias",
+    "named": true
+  },
+  {
     "type": "and",
     "named": false
   },
   {
-    "type": "atom_content",
-    "named": true
-  },
-  {
-    "type": "atom_end",
-    "named": true
-  },
-  {
-    "type": "atom_literal",
-    "named": true
-  },
-  {
-    "type": "atom_start",
+    "type": "atom",
     "named": true
   },
   {
@@ -3572,7 +3315,7 @@
   },
   {
     "type": "false",
-    "named": true
+    "named": false
   },
   {
     "type": "float",
@@ -3583,26 +3326,6 @@
     "named": false
   },
   {
-    "type": "function_identifier",
-    "named": true
-  },
-  {
-    "type": "heredoc_content",
-    "named": true
-  },
-  {
-    "type": "heredoc_end",
-    "named": true
-  },
-  {
-    "type": "heredoc_start",
-    "named": true
-  },
-  {
-    "type": "identifier",
-    "named": true
-  },
-  {
     "type": "in",
     "named": false
   },
@@ -3611,16 +3334,12 @@
     "named": true
   },
   {
-    "type": "keyword_literal",
-    "named": true
-  },
-  {
-    "type": "module",
+    "type": "keyword",
     "named": true
   },
   {
     "type": "nil",
-    "named": true
+    "named": false
   },
   {
     "type": "not",
@@ -3635,44 +3354,24 @@
     "named": false
   },
   {
+    "type": "quoted_content",
+    "named": true
+  },
+  {
     "type": "rescue",
     "named": false
   },
   {
-    "type": "sigil_content",
+    "type": "sigil_modifiers",
     "named": true
   },
   {
-    "type": "sigil_end",
-    "named": true
-  },
-  {
-    "type": "sigil_start",
-    "named": true
-  },
-  {
-    "type": "special_identifier",
-    "named": true
-  },
-  {
-    "type": "string_content",
-    "named": true
-  },
-  {
-    "type": "string_end",
-    "named": true
-  },
-  {
-    "type": "string_start",
+    "type": "sigil_name",
     "named": true
   },
   {
     "type": "true",
-    "named": true
-  },
-  {
-    "type": "unused_identifier",
-    "named": true
+    "named": false
   },
   {
     "type": "when",
@@ -3700,6 +3399,10 @@
   },
   {
     "type": "}",
+    "named": false
+  },
+  {
+    "type": "~",
     "named": false
   },
   {

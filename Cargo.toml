@@ -1,15 +1,15 @@
 [package]
-name = "difftastic"
-description = "A syntactic diffing tool"
-repository = "https://github.com/wilfred/difftastic"
+name = "difftastic_mod_for_windows"
+description = "A diff that understands syntax (fork which fixes terminal size for windows)"
+repository = "https://github.com/jessesna/difftastic"
 homepage = "http://difftastic.wilfred.me.uk/"
 license = "MIT"
-version = "0.14.0"
+version = "0.27.0"
 authors = ["Wilfred Hughes <me@wilfred.me.uk>"]
 keywords = ["diff", "syntax"]
 categories = ["development-tools", "command-line-utilities", "parser-implementations"]
 edition = "2018"
-rust-version = "1.54.0"
+rust-version = "1.56.0"
 include = [
         "/build.rs",
         "/src/",
@@ -22,23 +22,25 @@ include = [
 
 [dependencies]
 regex = "1.5.4"
-colored = "2.0.0"
-diff = "0.1.12"
-clap = "2.33.3"
+clap = { version = "3.0.13", features = ["cargo", "env"] }
 itertools = "0.10.1"
 typed-arena = "2.0.1"
 rustc-hash = "1.1.0"
 strsim = "0.10.0"
 lazy_static = "1.4.0"
 atty = "0.2.14"
-tree-sitter = "0.20.1"
+tree-sitter = "0.20.5"
 libc = "0.2.108"
 log = "0.4.14"
 pretty_env_logger = "0.4.0"
 mimalloc = { version = "0.1.26", default-features = false }
-radix-heap = "0.4.1"
+radix-heap = "0.4.2"
 walkdir = "2.3.2"
 any_terminal_size = "0.1.21"
+const_format = "0.2.22"
+owo-colors = "3.2.0"
+rpds = "0.10.0"
+wu-diff = "0.1.2"
 
 [dev-dependencies]
 pretty_assertions = "1.0.0"
@@ -58,3 +60,5 @@ debug = false
 [[bin]]
 name = "difft"
 path = "src/main.rs"
+
+[features]

@@ -3,43 +3,72 @@ on: [push, pull_request]
 name: Continuous integration
 
 jobs:
-  check:
-    name: Check
+  test_linux:
+    name: Test Linux
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.54.0
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: 1.54.0
+          toolchain: 1.56.0
           override: true
       - uses: actions-rs/cargo@v1
         with:
           command: test
 
-  package:
-    name: Build releasable package
+  test_mac:
+    name: Test macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.56.0
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  test_windows:
+    name: Test Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.56.0
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  regression_test:
+    name: Output Regression Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.54.0
+          toolchain: 1.56.0
+          override: true
+      - name: Generate output for all sample files
+        run: ./sample_files/compare_all.sh
+      - name: Verify output is unchanged
+        run: diff sample_files/compare.result sample_files/compare.expected
+
+  package:
+    name: Check Linux Packaging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.56.0
           override: true
       - uses: actions-rs/cargo@v1
         with:
@@ -54,7 +83,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.54.0
+          toolchain: 1.56.0
           override: true
       - run: rustup component add rustfmt
       - uses: actions-rs/cargo@v1

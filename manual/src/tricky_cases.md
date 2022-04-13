@@ -5,7 +5,7 @@ difficult cases observed during development.
 
 Not all of these cases work well in difftastic yet.
 
-## Adding delimiters
+## Adding Delimiters
 
 ```
 ;; Before
@@ -61,6 +61,38 @@ could make `x` look changed.
 
 This should be highlighted similar to the expanding delimiter case.
 
+## Disconnected Delimiters
+
+```
+;; Before
+(foo (bar))
+
+;; After
+(foo (novel) (bar))
+```
+
+We want to highlight `(novel)`. It is easy to end up with
+`( +novel+ ) +(+ bar +)+`, where a later pair of delimiters are
+chosen.
+
+## Rewrapping Large Nodes
+
+```
+;; Before
+[[foo]]
+(x y)
+
+;; After
+([[foo]] x y)
+```
+
+We want to highlight `[[foo]]` being moved inside the
+parentheses. However, a naive syntax differ prefers consider a removal
+of `()` in the before and an addition of `()` in the after to be more
+minimal diff.
+
+(Reported as [issue 44](https://github.com/Wilfred/difftastic/issues/44).)
+
 ## Reordering Within A List
 
 ```
@@ -93,7 +125,7 @@ Sliders are a common problem in text based diffs, where lines are
 matched in a confusing way.
 
 They typically look like this. The diff has to arbitrarily choose a
-delimiter, and it chooses the wrong one.
+line containing delimiter, and it chooses the wrong one.
 
 ```
 + }
@@ -139,7 +171,7 @@ foo(789);
 Do we consider `foo(123)` or `foo(456)` to match with `foo(789)`?
 Difftastic prefers `foo(456)` by preferring nodes at the same nesting depth.
 
-## Replacements
+## Replacements With Minor Similarities
 
 ```
 // Before
@@ -159,7 +191,7 @@ line-based diffs. Line-diffs struggle if there are a small number of
 common lines. The more precise, granular behaviour of tree diffs makes
 this problem much more common though.
 
-## Similar Comments
+## Matching Substrings In Comments
 
 ```
 // Before
@@ -171,9 +203,9 @@ foobar();
 foobaz();
 ```
 
-`foobar` and `foobaz` are completely different, and should never be
-matched up. For comments, we'd rather match up comments that are
-textually similar.
+`foobar` and `foobaz` are completely different, and their common
+prefix `fooba` should not be matched up. However, matching common
+prefixes or suffixes for comments is desirable.
 
 ## Multiline Comments
 
@@ -209,6 +241,109 @@ Block comments have prefixes that aren't meaningful.
 The inner content has changed from `jumps * over` to `immediately *
 jumps over`. However, the `*` is decorative and we don't care that
 it's moved.
+
+## Small Changes To Large Strings
+
+```
+// Before
+"""A very long string
+with lots of words about
+lots of stuff."""
+
+// After
+"""A very long string
+with lots of NOVEL words about
+lots of stuff."""
+```
+
+It would be correct to highlight the entire string literal as being
+removed and replaced with a new string literal. However, this makes it
+hard to see what's actually changed.
+
+It's clear that variable names should be treated atomically, and
+comments are safe to show subword changes. It's not clear how to
+handle a small change in a 20 line string literal.
+
+It's tempting to split strings on spaces and diff that, but users
+still want to know when whitespace changes inside strings. `" "` and
+`"  "` are not the same.
+
+## Autoformatter Punctuation
+
+```
+// Before
+foo("looooong", "also looooong");
+
+// Before
+foo(
+  "looooong",
+  "novel",
+  "also looooong",
+);
+```
+
+Autoformatters (e.g. [prettier](https://prettier.io/)) will sometimes
+add or remove punctuation when formatting. Commas and parentheses are
+the most common.
+
+Syntactic diffing can ignore whitespace changes, but it has to assume
+punctuation is meaningful. This can lead to punctuation changes being
+highlighted, which may be quite far from the relevant content change.
+
+## Novel Blank Lines
+
+Blank lines are challenging for syntactic diffs. We are comparing
+syntactic tokens, so we don't see blank lines.
+
+```
+// Before
+A
+B
+
+// After
+A
+
+B
+```
+
+Generally we want syntactic diffing to ignore blank lines. In this
+first example, this should show no changes.
+
+This is occasionally problematic, as it can hide accidental code
+reformatting.
+
+```
+// Before
+A
+B
+
+// After
+A
+X
+
+Y
+B
+```
+
+In this second example, we've inserted X and Y and a blank line. We
+want to highlight the blank line as an addition.
+
+```
+// Before
+A
+
+
+B
+
+// After
+A
+X
+B
+```
+
+In this third example, the syntactic diffing only sees an
+addition. From the user's perspective, there has also been a removal
+of two blank lines.
 
 ## Invalid Syntax
 

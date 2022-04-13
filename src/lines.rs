@@ -1,9 +1,10 @@
 //! Manipulate lines of text and groups of lines.
 
 use crate::positions::SingleLineSpan;
-use lazy_static::lazy_static;
-use regex::Regex;
-use std::{cmp::max, fmt};
+use std::{
+    cmp::{max, Ordering},
+    fmt,
+};
 
 /// A distinct number type for line numbers, to prevent confusion with
 /// other numerical data.
@@ -13,14 +14,18 @@ use std::{cmp::max, fmt};
 pub struct LineNumber(pub usize);
 
 impl LineNumber {
-    pub fn one_indexed(&self) -> usize {
+    pub fn one_indexed(self) -> usize {
         self.0 + 1
     }
 }
 
 impl fmt::Debug for LineNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_fmt(format_args!("LineNumber: {}", self.0))
+        f.write_fmt(format_args!(
+            "LineNumber: {} (raw: {})",
+            self.one_indexed(),
+            self.0
+        ))
     }
 }
 
@@ -46,48 +51,56 @@ struct LinePosition {
 /// line-relative positions.
 #[derive(Debug)]
 pub struct NewlinePositions {
-    /// A vector of the start positions of all the lines in `s`.
-    positions: Vec<usize>,
-    str_length: usize,
+    /// A vector of the start and end positions of all the lines in
+    /// `s`. Positions include the newline character itself.
+    positions: Vec<(usize, usize)>,
 }
 
 impl From<&str> for NewlinePositions {
     fn from(s: &str) -> Self {
-        lazy_static! {
-            static ref NEWLINE_RE: Regex = Regex::new("\n").unwrap();
+        let mut line_start = 0;
+        let mut positions = vec![];
+        for line in s.split('\n') {
+            let line_end = line_start + line.len() + "\n".len();
+            // TODO: this assumes lines terminate with \n, not \r\n.
+            positions.push((line_start, line_end - 1));
+            line_start = line_end;
         }
-        let mut positions: Vec<_> = NEWLINE_RE.find_iter(s).map(|mat| mat.end()).collect();
-        positions.insert(0, 0);
 
-        NewlinePositions {
-            positions,
-            str_length: s.len(),
-        }
+        NewlinePositions { positions }
     }
 }
 
 impl NewlinePositions {
+    fn from_offset(&self, offset: usize) -> usize {
+        let idx = self.positions.binary_search_by(|(line_start, line_end)| {
+            if *line_end < offset {
+                return Ordering::Less;
+            }
+            if *line_start > offset {
+                return Ordering::Greater;
+            }
+
+            Ordering::Equal
+        });
+
+        idx.expect("line should be present")
+    }
+
     /// Convert to single-line spans. If the original span crosses a
     /// newline, the vec will contain multiple items.
     pub fn from_offsets(&self, region_start: usize, region_end: usize) -> Vec<SingleLineSpan> {
+        assert!(region_start <= region_end);
+
+        let first_idx = self.from_offset(region_start);
+        let last_idx = self.from_offset(region_end);
+
         let mut res = vec![];
-        for (line_num, line_start) in self.positions.iter().enumerate() {
-            let line_end = match self.positions.get(line_num + 1) {
-                // TODO: this assumes lines terminate with \n, not \r\n.
-                Some(v) => *v - 1,
-                None => self.str_length,
-            };
-
-            if region_start > line_end {
-                continue;
-            }
-            if *line_start > region_end {
-                break;
-            }
-
+        for idx in first_idx..=last_idx {
+            let (line_start, line_end) = self.positions[idx];
             res.push(SingleLineSpan {
-                line: line_num.into(),
-                start_col: if *line_start > region_start {
+                line: idx.into(),
+                start_col: if line_start > region_start {
                     0
                 } else {
                     region_start - line_start
@@ -99,6 +112,7 @@ impl NewlinePositions {
                 },
             });
         }
+
         res
     }
 
@@ -108,6 +122,8 @@ impl NewlinePositions {
         region_start: usize,
         region_end: usize,
     ) -> Vec<SingleLineSpan> {
+        assert!(region_start <= region_end);
+
         let mut res = vec![];
         for pos in self.from_offsets(region_start, region_end) {
             if pos.line.0 == 0 {
@@ -135,14 +151,12 @@ pub fn codepoint_len(s: &str) -> usize {
     s.chars().count()
 }
 
-/// The first `len` codepoints of `s`. This is safer than slicing by
-/// bytes, which panics if the byte isn't on a codepoint boundary.
-pub fn substring_by_codepoint(s: &str, start: usize, end: usize) -> &str {
-    let byte_start = s.char_indices().nth(start).unwrap().0;
-    match s.char_indices().nth(end) {
-        Some(byte_end) => &s[byte_start..byte_end.0],
-        None => &s[byte_start..],
-    }
+/// Return the length of `s` in bytes.
+///
+/// This is a trivial wrapper to make it clear when we want bytes not
+/// codepoints.
+pub fn byte_len(s: &str) -> usize {
+    s.len()
 }
 
 pub trait MaxLine {
@@ -151,7 +165,7 @@ pub trait MaxLine {
 
 impl<S: AsRef<str>> MaxLine for S {
     fn max_line(&self) -> LineNumber {
-        (max(1, self.as_ref().lines().count()) - 1).into()
+        (max(1, self.as_ref().split('\n').count()) - 1).into()
     }
 }
 
@@ -196,16 +210,16 @@ mod tests {
         assert_eq!(
             line_spans,
             vec![
-                (SingleLineSpan {
+                SingleLineSpan {
                     line: 1.into(),
                     start_col: 1,
                     end_col: 3
-                }),
-                (SingleLineSpan {
+                },
+                SingleLineSpan {
                     line: 2.into(),
                     start_col: 0,
                     end_col: 2
-                })
+                }
             ]
         );
     }
@@ -220,6 +234,12 @@ mod tests {
     fn empty_str_max_line() {
         let line: String = "".into();
         assert_eq!(line.max_line().0, 0);
+    }
+
+    #[test]
+    fn str_max_line_trailing_newline() {
+        let line: String = "foo\nbar\n".into();
+        assert_eq!(line.max_line().0, 2);
     }
 
     #[test]
